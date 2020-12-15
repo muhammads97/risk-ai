@@ -5,8 +5,8 @@ import egypt from "../egypt/egypt.png";
 export default class GameState extends React.Component {
   constructor(props) {
     super(props);
-    this.player1 = props.player1;
-    this.player2 = props.player2;
+    this.agent1 = props.agent1;
+    this.agent2 = props.agent2;
 
     this.state = {
       turn: 0,
@@ -23,20 +23,22 @@ export default class GameState extends React.Component {
 
   attack() {
     if (this.state.turn == 0) {
-      this.player1.attack(this);
+      this.agent1.attack(this);
     } else {
-      this.player2.attack(this);
+      this.agent2.attack(this);
     }
   }
 
   assignArmy() {
     if (this.state.turn == 0) {
-      this.player1.assignArmy(this);
+      this.agent1.assignArmy(this);
     } else {
-      this.player2.assignArmy(this);
+      this.agent2.assignArmy(this);
     }
   }
-
+  getTurn(){
+    return this.tassignArmyurn;
+  }
   endTurn() {
     let turn = this.state.turn == 0 ? 1 : 0;
     this.setState({ turn: turn });

@@ -1,17 +1,9 @@
 import React from 'react'
+import AbstractAgent from './AbstractAgent';
 
-export default class pacifistAgent {
+export default class pacifistAgent extends AbstractAgent {
     constructor(props){
 
     }
-    /**
-     * function AssignArmy()
-     * 
-     * 
-     *  
-     * */     
-    AssignArmy = (gameState)=>{
-        let attackerTerritoryPlayer = gameState.state.attacker.getPlayer();
-        
-    }           
+
 }
