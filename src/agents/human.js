@@ -1,17 +1,17 @@
 export default class HumanAgent {
   constructor() {
-    let totalArmy =0;
-    let totalTerrs =0;
-    let currMap = null;
-    let attackingTerritory = null;
-    let defendingTerritory = null;
+    this.totalArmy =0;
+    this.totalTerrs =0;
+    this.currMap = null;
+    this.attackingTerritory = null;
+    this.defendingTerritory = null;
   }
   attack(gameState) {
     this.currMap = gameState.getMap();
     gameState.selectTerritory("attack", (selectedTerritory) => {
 
-      if(selectedTerritory.getPlayer != gameState.getTurn() || selectedTerritory.getArmy() == 1
-      || selectedTerritory.getAdjEnemy().length == 0){
+      if(selectedTerritory.getPlayer !== gameState.getTurn() || selectedTerritory.getArmy() === 1
+      || selectedTerritory.getAdjEnemy().length === 0){
         /*
           alert you cant choose this terr as  attacking terr
         */
@@ -20,8 +20,8 @@ export default class HumanAgent {
 
       this.attackingTerritory = selectedTerritory;
       gameState.selectTerritory("victim", (selectedTerritory) => {
-        if(selectedTerritory.getPlayer == gameState.getTurn() ||
-         !attackingTerritory.getAdjEnemy().includes(selectedTerritory)){
+        if(selectedTerritory.getPlayer === gameState.getTurn() ||
+         !this.attackingTerritory.getAdjEnemy().includes(selectedTerritory)){
           /*
             alert you cant choose this terr as  defending terr
           */
@@ -32,13 +32,13 @@ export default class HumanAgent {
       });
     });
     //asynch  ? so we need to move these in the second callback
-    performAttac(this.attackingTerritory,this.defendingTerritory);
+    this.performAttac(this.attackingTerritory,this.defendingTerritory);
     gameState.setMap(this.currMap);
   }
   //fixed in all agents
   performAttac(attackingTerritory,defendingTerritory){
-    attarmy = attackingTerritory.getArmy();
-    defarmy = defendingTerritory.getArmy();
+    const attarmy = attackingTerritory.getArmy();
+    const defarmy = defendingTerritory.getArmy();
     //case draw
     if( attarmy == defarmy ){
       attackingTerritory.removeArmy(attarmy-1);
