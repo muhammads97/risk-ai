@@ -1,7 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import MapEgypt from "./maps/map";
 
 function App() {
+  const [turn, setTurn] = React.useState(0);
+
+  let egypt = new MapEgypt();
+  egypt.territories[0]
+    .getAdjTerritory("Suez")
+    .getAdjTerritory("Giza")
+    .getAdjTerritory("New Valley")
+    .getAdj()
+    .forEach((t) => {
+      console.log(t.name);
+    });
+
   return (
     <div className="App">
       <header className="App-header">

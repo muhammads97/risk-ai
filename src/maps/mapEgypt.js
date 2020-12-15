@@ -48,6 +48,8 @@ export default class MapEgypt {
     giza.addAdjTerritory(monufia);
     giza.addAdjTerritory(qalyubia);
     giza.addAdjTerritory(cairo);
+    giza.addAdjTerritory(red_sea);
+    giza.addAdjTerritory(suez);
     gharbia.addAdjTerritory(dakahlia);
     gharbia.addAdjTerritory(monufia);
     dakahlia.addAdjTerritory(damietta);
@@ -73,6 +75,7 @@ export default class MapEgypt {
     red_sea.addAdjTerritory(sohag);
     red_sea.addAdjTerritory(qena);
     red_sea.addAdjTerritory(aswan);
+
     faiyum.addAdjTerritory(beni_suef);
     beni_suef.addAdjTerritory(minya);
     minya.addAdjTerritory(asyut);
