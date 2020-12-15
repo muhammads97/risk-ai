@@ -27,6 +27,9 @@ export default class Territory {
 
     addAdjTerritory(territory){
         this.adj.push(territory);
+        if(!territory.isAdj(this.name)){
+            territory.addAdjTerritory(this);
+        }
     }
     removeAdjTerritory(name){
         let index = -1;
