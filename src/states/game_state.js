@@ -1,20 +1,26 @@
 import * as React from "react";
+import "../App.css";
 
 export default class GameState extends React.Component {
-  constructor(map, player1, player2) {
-    this.map = map;
-    this.player1 = player1;
-    this.player2 = player2;
+  constructor(props) {
+    super(props);
+    this.player1 = props.player1;
+    this.player2 = props.player2;
 
     this.state = {
       turn: 0,
       selectedTerritory: null,
       selecting: null,
+      map: props.map,
     };
   }
 
+  componentDidMount() {
+    console.log(this.state);
+  }
+
   attack() {
-    if (turn == 0) {
+    if (this.state.turn == 0) {
       this.player1.attack(this);
     } else {
       this.player2.attack(this);
@@ -22,7 +28,7 @@ export default class GameState extends React.Component {
   }
 
   assignArmy() {
-    if (turn == 0) {
+    if (this.state.turn == 0) {
       this.player1.assignArmy(this);
     } else {
       this.player2.assignArmy(this);
@@ -44,10 +50,10 @@ export default class GameState extends React.Component {
   setMap(map) {}
 
   render() {
-    this.map.getTerritories().map((t) => {
-      return (onclick) => {
-        this.callback(t);
-      };
-    });
+    return (
+      <div className={"gameContainer"}>
+        <button>MuhammadS</button>
+      </div>
+    );
   }
 }
