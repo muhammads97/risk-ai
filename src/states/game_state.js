@@ -2,6 +2,8 @@ import * as React from "react";
 import "../App.css";
 import egypt from "../egypt/egypt.png";
 
+const initialArmy = 20;
+// states: initialAssign, assign, attack, victim
 export default class GameState extends React.Component {
   constructor(props) {
     super(props);
@@ -12,13 +14,16 @@ export default class GameState extends React.Component {
       turn: 0,
       attacker: null,
       victim: null,
-      selecting: null,
+      selecting: "initialAssign",
       map: props.map,
+      agent1_free_army: initialArmy,
+      agent2_free_army: initialArmy,
     };
   }
 
   componentDidMount() {
     console.log(this.state);
+    this.distributeTerritories();
   }
 
   attack() {
@@ -36,7 +41,24 @@ export default class GameState extends React.Component {
       this.agent2.assignArmy(this);
     }
   }
-  getTurn(){
+
+  distributeTerritories() {
+    //randomly assign territories to players
+    //add one army to each territory and set the remaining free army in the state
+  }
+
+  calculateArmy() {
+    if (this.state.turn == 0)
+      this.setState({
+        agent1_free_army: Math.floor(this.agent1.totalTerrs / 3),
+      });
+    else
+      this.setState({
+        agent2_free_army: Math.floor(this.agent2.totalTerrs / 3),
+      });
+  }
+
+  getTurn() {
     return this.tassignArmyurn;
   }
   endTurn() {
@@ -57,6 +79,24 @@ export default class GameState extends React.Component {
     this.setState({ map });
   }
 
+  reduceFreeArmyCallBackInitial() {
+    if (this.state.agent1_free_army == 0 && this.state.turn == 0) {
+      this.setState({ turn: 1 });
+    } else if (this.state.agent2_free_army == 0 && this.state.turn == 1) {
+      this.setState({ turn: 0 });
+      this.setState({ selecting: "assignArmy" });
+      this.calculateArmy();
+    }
+  }
+
+  reduceFreeArmyCallBack() {
+    if (this.state.agent1_free_army == 0 && this.state.turn == 0) {
+      this.setState({ selecting: "attack" });
+    } else if (this.state.agent2_free_army == 0 && this.state.turn == 1) {
+      this.setState({ selecting: "attack" });
+    }
+  }
+
   render() {
     return (
       <div className={"gameContainer"}>
@@ -64,10 +104,41 @@ export default class GameState extends React.Component {
           (territory) => {
             if (this.state.selecting == "attack") {
               this.setState({ attacker: territory });
-            } else {
+              this.callback(territory);
+            } else if (this.state.selecting == "victim") {
               this.setState({ victim: territory });
+              this.callback(territory);
+            } else if (this.state.selecting == "initialAssign") {
+              if (this.state.turn == territory.player) {
+                territory.addArmy(1);
+                if (this.state.turn == 0)
+                  this.setState(
+                    { agent1_free_army: this.state.agent1_free_army - 1 },
+                    this.reduceFreeArmyCallBackInitial
+                  );
+                else
+                  this.setState(
+                    { agent2_free_army: this.state.agent2_free_army - 1 },
+                    this.reduceFreeArmyCallBackInitial
+                  );
+              } else {
+                //alert not your t.
+              }
+            } else if (this.state.selecting == "assignArmy") {
+              if (territory.player == this.state.turn) {
+                territory.addArmy(1);
+                if (this.state.turn == 0)
+                  this.setState(
+                    { agent1_free_army: this.state.agent1_free_army - 1 },
+                    this.reduceFreeArmyCallBack
+                  );
+                else
+                  this.setState(
+                    { agent2_free_army: this.state.agent2_free_army - 1 },
+                    this.reduceFreeArmyCallBack
+                  );
+              }
             }
-            this.callback(territory);
           },
           this.state.selecting,
           this.state.attacker,
