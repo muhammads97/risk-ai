@@ -8,13 +8,10 @@ export default class pacifistAgent {
      * function AssignArmy()
      * 
      * 
-     * 
-     * 
-     * 
      *  
      * */     
-    AssignArmy = (player, map)=>{
-       let ganed = player.getCurrentTerritories()/;
-
+    AssignArmy = (gameState)=>{
+        let attackerTerritoryPlayer = gameState.state.attacker.getPlayer();
+        
     }           
 }
