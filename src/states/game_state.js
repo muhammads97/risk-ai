@@ -22,7 +22,6 @@ export default class GameState extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.state);
     this.distributeTerritories();
   }
 
@@ -64,7 +63,8 @@ export default class GameState extends React.Component {
   endTurn() {
     let turn = this.state.turn == 0 ? 1 : 0;
     this.setState({ turn: turn });
-    this.assignArmy();
+    this.calculateArmy();
+    this.setState({selecting: "assignArmy"});
   }
 
   selectTerritory(type, callback) {
