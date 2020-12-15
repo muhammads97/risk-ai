@@ -1,5 +1,6 @@
 import * as React from "react";
 import "../App.css";
+import egypt from "../egypt/egypt.png";
 
 export default class GameState extends React.Component {
   constructor(props) {
@@ -9,7 +10,8 @@ export default class GameState extends React.Component {
 
     this.state = {
       turn: 0,
-      selectedTerritory: null,
+      attacker: null,
+      victim: null,
       selecting: null,
       map: props.map,
     };
@@ -52,7 +54,19 @@ export default class GameState extends React.Component {
   render() {
     return (
       <div className={"gameContainer"}>
-        <button>MuhammadS</button>
+        {this.state.map.renderMap(
+          (territory) => {
+            if (this.state.selecting == "attack") {
+              this.setState({ attacker: territory });
+            } else {
+              this.setState({ victim: territory });
+            }
+            this.callback(territory);
+          },
+          this.state.selecting,
+          this.state.attacker,
+          this.state.victim
+        )}
       </div>
     );
   }

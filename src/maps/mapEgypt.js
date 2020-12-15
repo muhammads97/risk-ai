@@ -1,34 +1,67 @@
 import Territory from "../states/territory";
+import egypt from "../egypt/egypt.png";
+import "../App.css";
+const h = 1000;
+const w = 1000;
+const locations = {
+  cairo: { x: (w * 6) / 10, y: (h * 1) / 6 },
+  alexandria: { x: (w * 45) / 100, y: (h * 2) / 20 },
+  aswan: { x: (w * 72) / 100, y: (h * 80) / 100 },
+  asyut: { x: (w * 57) / 100, y: (h * 45) / 100 },
+  beheira: { x: (w * 50) / 100, y: (h * 2) / 20 },
+  beni_suef: { x: (w * 50) / 100, y: (h * 28) / 100 },
+  dakahlia: { x: (w * 59) / 100, y: (h * 7) / 100 },
+  damietta: { x: (w * 61) / 100, y: (h * 3) / 100 },
+  faiyum: { x: (w * 50) / 100, y: (h * 25) / 100 },
+  gharbia: { x: (w * 55) / 100, y: (h * 8.5) / 100 },
+  giza: { x: w * 0.4, y: h * 0.28 },
+  ismailia: { x: w * 0.67, y: h * 0.12 },
+  kafr_el_sheikh: { x: w * 0.55, y: h * 0.04 },
+  matruh: { x: w * 0.25, y: h * 0.15 },
+  minya: { x: w * 0.5, y: h * 0.32 },
+  monufia: { x: w * 0.549, y: h * 0.12 },
+  new_valley: { x: w * 0.3, y: h * 0.65 },
+  north_sinai: { x: w * 0.75, y: h * 0.12 },
+  port_said: { x: w * 0.67, y: h * 0.06 },
+  qalyubia: { x: w * 0.568, y: h * 0.137 },
+  qena: { x: (w * 70) / 100, y: (h * 55) / 100 },
+  red_sea: { x: (w * 80) / 100, y: (h * 60) / 100 },
+  sharqia: { x: (w * 6) / 10, y: h * 0.115 },
+  sohag: { x: (w * 624) / 1000, y: (h * 52) / 100 },
+  south_sinai: { x: w * 0.8, y: h * 0.3 },
+  suez: { x: w * 0.65, y: h * 0.2 },
+  luxor: { x: w * 0.683, y: h * 0.585 },
+};
 
 export default class MapEgypt {
   constructor() {
-    let cairo = new Territory("Cairo");
-    let alexandria = new Territory("Alexandria");
-    let aswan = new Territory("Aswan");
-    let asyut = new Territory("Asyut");
-    let beheira = new Territory("Beheira");
-    let beni_suef = new Territory("Beni Suef");
-    let dakahlia = new Territory("Dakahlia");
-    let damietta = new Territory("Damietta");
-    let faiyum = new Territory("Faiyum");
-    let gharbia = new Territory("Gharbia");
-    let giza = new Territory("Giza");
-    let ismailia = new Territory("Ismailia");
-    let kafr_el_sheikh = new Territory("Kafr El Sheikh");
-    let matruh = new Territory("Matruh");
-    let minya = new Territory("Minya");
-    let monufia = new Territory("Monufia");
-    let new_valley = new Territory("New Valley");
-    let north_sinai = new Territory("North Sinai");
-    let port_said = new Territory("Port Said");
-    let qalyubia = new Territory("Qalyubia");
-    let qena = new Territory("Qena");
-    let red_sea = new Territory("Red Sea");
-    let sharqia = new Territory("Sharqia");
-    let sohag = new Territory("Sohag");
-    let south_sinai = new Territory("South Sinai");
-    let suez = new Territory("Suez");
-    let luxor = new Territory("Luxor");
+    let cairo = new Territory("cairo");
+    let alexandria = new Territory("alexandria");
+    let aswan = new Territory("aswan");
+    let asyut = new Territory("asyut");
+    let beheira = new Territory("beheira");
+    let beni_suef = new Territory("beni_suef");
+    let dakahlia = new Territory("dakahlia");
+    let damietta = new Territory("damietta");
+    let faiyum = new Territory("faiyum");
+    let gharbia = new Territory("gharbia");
+    let giza = new Territory("giza");
+    let ismailia = new Territory("ismailia");
+    let kafr_el_sheikh = new Territory("kafr_el_sheikh");
+    let matruh = new Territory("matruh");
+    let minya = new Territory("minya");
+    let monufia = new Territory("monufia");
+    let new_valley = new Territory("new_valley");
+    let north_sinai = new Territory("north_sinai");
+    let port_said = new Territory("port_said");
+    let qalyubia = new Territory("qalyubia");
+    let qena = new Territory("qena");
+    let red_sea = new Territory("red_sea");
+    let sharqia = new Territory("sharqia");
+    let sohag = new Territory("sohag");
+    let south_sinai = new Territory("south_sinai");
+    let suez = new Territory("suez");
+    let luxor = new Territory("luxor");
 
     alexandria.addAdjTerritory(beheira);
     alexandria.addAdjTerritory(matruh);
@@ -75,7 +108,6 @@ export default class MapEgypt {
     red_sea.addAdjTerritory(sohag);
     red_sea.addAdjTerritory(qena);
     red_sea.addAdjTerritory(aswan);
-
     faiyum.addAdjTerritory(beni_suef);
     beni_suef.addAdjTerritory(minya);
     minya.addAdjTerritory(asyut);
@@ -129,5 +161,35 @@ export default class MapEgypt {
 
   getInitialArmy() {
     return this.initialArmy;
+  }
+  renderMap(selectHandler, selecting, attacker, victim) {
+    return (
+      <div className="map">
+        {this.territories.map((t) => {
+          let bg_color =
+            attacker && t.name == attacker.name
+              ? "green"
+              : victim && t.name == victim.name
+              ? "red"
+              : t.player != null
+              ? t.player.color
+              : "turquoise";
+          return (
+            <button
+              className={"territoryBtn"}
+              style={{
+                top: locations[t.name].y,
+                left: locations[t.name].x,
+                backgroundColor: bg_color,
+              }}
+              disabled={!selecting}
+              onClick={() => selectHandler(t)}
+            >
+              {t.army}
+            </button>
+          );
+        })}
+      </div>
+    );
   }
 }
