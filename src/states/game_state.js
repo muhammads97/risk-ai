@@ -47,9 +47,13 @@ export default class GameState extends React.Component {
     this.setState({ selecting: type });
     this.callback = callback;
   }
-  getMap() {}
+  getMap() {
+    return this.state.map;
+  }
 
-  setMap(map) {}
+  setMap(map) {
+    this.setState({ map });
+  }
 
   render() {
     return (
