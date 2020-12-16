@@ -6,37 +6,13 @@ export default class HumanAgent {
     this.attackingTerritory = null;
     this.defendingTerritory = null;
   }
-  attack(gameState) {
-    this.currMap = gameState.getMap();
-    gameState.selectTerritory("attack", (selectedTerritory) => {
+  attack(){
 
-      if(selectedTerritory.getPlayer().getId() !== gameState.getTurn() || selectedTerritory.getArmy() === 1
-      || selectedTerritory.getAdjEnemy().length === 0){
-        /*
-          alert you cant choose this terr as  attacking terr
-        */
-        return false;
-      }
-
-      this.attackingTerritory = selectedTerritory;
-      gameState.selectTerritory("victim", (selectedTerritory) => {
-        if(selectedTerritory.getPlayer === gameState.getTurn() ||
-         !this.attackingTerritory.getAdjEnemy().includes(selectedTerritory)){
-          /*
-            alert you cant choose this terr as  defending terr
-          */
-           return false;
-        }
-        this.defendingTerritory = selectedTerritory;
-        return true;
-      });
-    });
-    //asynch  ? so we need to move these in the second callback
-    this.performAttac(this.attackingTerritory,this.defendingTerritory);
-    gameState.setMap(this.currMap);
   }
+  //FIXME 
+
   //fixed in all agents
-  performAttac(attackingTerritory,defendingTerritory){
+  performAttack(attackingTerritory,defendingTerritory){
     const attarmy = attackingTerritory.getArmy();
     const defarmy = defendingTerritory.getArmy();
     //case draw

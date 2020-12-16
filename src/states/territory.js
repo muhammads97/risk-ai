@@ -1,16 +1,16 @@
 export default class Territory {
   constructor(name) {
     this.name = name;
-    this.player = null;
+    this.agent = 0;
     this.army = 0;
     this.adj = [];
   }
 
-  setPlayer(player) {
-    this.player = player;
+  setAgent(agent) {
+    this.agent = agent;
   }
-  getPlayer() {
-    return this.player;
+  getAgent() {
+    return this.agent;
   }
 
   addArmy(army) {
@@ -18,8 +18,8 @@ export default class Territory {
   }
   removeArmy(army) {
     this.army -= army;
-    if (this.army <= 0) return true; // player lost this territory
-    return false; //player still owns this territory
+    if (this.army <= 0) return true; // agent lost this territory
+    return false; //agent still owns this territory
   }
   getArmy() {
     return this.army;
@@ -45,7 +45,9 @@ export default class Territory {
     return this.adj;
   }
 
-  getAdjEnimy() {}
+  getAdjEnemy() {
+    return this.adj.filter((t) => t.agent !== this.agent); 
+  }
 
   getAdjOwned() {}
 
@@ -57,21 +59,21 @@ export default class Territory {
     return this.adj.find((t) => t.name == name) != null;
   }
 
-  getAdjTerritory(name) {
-    return this.adj.find((t) => t.name == name);
+  getAdjTerritory(ter) {
+    return this.adj.find((t) => t.name == ter.name);
   }
 
   manoeuvreToAdjTerritory(army, name) {
     if (army >= this.army) return false;
     if (!this.isAdj(name)) return false;
     let t = this.getAdjTerritory(name);
-    if (t.player != this.player) return false;
+    if (t.agent != this.agent) return false;
     t.addArmy(army);
     this.removeArmy(army);
   }
 
   findPathToTerritory(name) {
-    //there is a path between 2 territories if all the territories in the path are owned by the same player
+    //there is a path between 2 territories if all the territories in the path are owned by the same agent
   }
 
   manoeuvreToRemoteTerritory(name) {
