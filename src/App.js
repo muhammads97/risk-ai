@@ -1,10 +1,15 @@
 import "./App.css";
 import * as React from "react";
-import MapEgypt from "./maps/mapEgypt";
+import EgyptMap from "./maps/EgyptMap";
 import HumanAgent from "./agents/HumanAgent";
-import GameState from "./states/game_state";
+
+
 
 function App() {
+  const Maps = {
+    EGYPT: "egypt",
+    USA: "usa"
+  }
   const [map, setMap] = React.useState(null);
   const [agent1, setAgent1] = React.useState(null);
   const [agent2, setAgent2] = React.useState(null);
@@ -14,36 +19,36 @@ function App() {
   const chooseMap = () => {
     return (
       <div className="row">
-        <button className="button" onClick={() => setMap(new MapEgypt())}>
+        <button className="button" onClick={() => setMap(Maps.EGYPT)}>
           Egypt
       </button>
         <button className="button">USA</button>
       </div>);
   }
   const chooseAgentType = (agent) => {
-    return(
-    <div className="col">
-      <h1>select agent {agent+1}</h1>
-      <div className="row">
-        <div className="col">
-          <button
-            className="agentButton"
-            onClick={() => (agent === 0 ? setAgent1(new HumanAgent()) : setAgent2(new HumanAgent()))}
-          >
-            Human
+    return (
+      <div className="col">
+        <h1>select agent {agent + 1}</h1>
+        <div className="row">
+          <div className="col">
+            <button
+              className="agentButton"
+              onClick={() => (agent === 0 ? setAgent1(new HumanAgent(1)) : setAgent2(new HumanAgent(2)))}
+            >
+              Human
         </button>
-          <button className="agentButton">Passive</button>
-          <button className="agentButton">Aggressive</button>
-          <button className="agentButton">pacifist</button>
-        </div>
-        <div className="col">
-          <button className="agentButton">greedy</button>
-          <button className="agentButton"> A* search</button>
-          <button className="agentButton"> real-time A*</button>
-          <button className="agentButton">alpha-beta pruning</button>
+            <button className="agentButton">Passive</button>
+            <button className="agentButton">Aggressive</button>
+            <button className="agentButton">pacifist</button>
+          </div>
+          <div className="col">
+            <button className="agentButton">greedy</button>
+            <button className="agentButton"> A* search</button>
+            <button className="agentButton"> real-time A*</button>
+            <button className="agentButton">alpha-beta pruning</button>
+          </div>
         </div>
       </div>
-    </div>
     )
   }
   return (
@@ -55,9 +60,12 @@ function App() {
           chooseAgentType(0)
         ) : agent2 == null ? (
           chooseAgentType(1)
-        ) : (
-                <GameState map={map} agent1={agent1} agent2={agent2} />
-              )}
+        ) :
+              (map === Maps.EGYPT ? 
+              <EgyptMap agent1={agent1} agent2={agent2} /> :
+                <div></div>
+                )
+        }
       </div>
     </div>
   );
