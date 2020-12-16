@@ -1,7 +1,7 @@
 import React from 'react'
 import AbstractAgent from './AbstractAgent';
 
-export default class Aggressive extends AbstractAgent {
+export default class Passive extends AbstractAgent {
 
     constructor(props) {
         super(props);
@@ -13,7 +13,6 @@ export default class Aggressive extends AbstractAgent {
         let newArmy = this.get_new_army(numOfOwnTerritory);
         this.addingNewArmy(newArmy, map);
         game.setMap(map);
-        this.attacker();
     }
 
     get_own_territories(map, game) {
@@ -36,21 +35,16 @@ export default class Aggressive extends AbstractAgent {
     addingNewArmy(newArmy, map) {
         // add new Army to the territory with the lowest number of army.
         let temp = map.getTerritories();
-        let maxi = 0;
+        let mini = 100;
         let y = temp[0];
         for (let x in temp) {
-            if (x.getPlayer().get_Type() === "Aggressive") {
-                if (x.getArmy() > maxi) {
+            if (x.getPlayer().get_Type() === "Passive") {
+                if (x.getArmy() < mini) {
                     y = x;
-                    maxi = x.getArmy();
+                    mini = x.getArmy();
                 }
             }
         }
-        if (maxi !== 0) y.addArmy(newArmy);
-    }
-
-
-    attacker() {
-
+        if (mini !== 100) y.addArmy(newArmy);
     }
 }
