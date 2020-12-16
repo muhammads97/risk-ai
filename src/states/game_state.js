@@ -69,7 +69,8 @@ export default class GameState extends React.Component {
     }
     this.agent1.totalTerrs = agent1TerritoryCount;
     this.agent2.totalTerrs = allTerritories.length - agent1TerritoryCount;
-
+    //console.log(this.agent1.totalTerrs)
+    //console.log(this.agent2.totalTerrs)
 
     this.setState({
       agent1_free_army: this.state.agent1_free_army - agent1TerritoryCount,
@@ -83,21 +84,24 @@ export default class GameState extends React.Component {
     if (this.state.turn == 0)
       this.setState({
         agent1_free_army: Math.floor(this.agent1.totalTerrs / 3),
+        
       });
     else
       this.setState({
         agent2_free_army: Math.floor(this.agent2.totalTerrs / 3),
       });
+      //console.log(this.state.agent2_free_army) //prints 0
+      //console.log(Math.floor(this.agent1.totalTerrs / 3)) //prints 4 
   }
 
   getTurn() {
-    return this.tassignArmyurn;
+    return this.turn;
+    
   }
   endTurn() {
     let turn = this.state.turn == 0 ? 1 : 0;
-    this.setState({ turn: turn });
-    this.calculateArmy();
-    this.setState({ selecting: states.assignArmy });
+    this.setState({ turn: turn },this.calculateArmy);
+    this.setState({ selecting: states.ASSIGN_ARMY });
   }
 
   selectTerritory(type, callback) {
@@ -116,13 +120,17 @@ export default class GameState extends React.Component {
     if (this.state.agent1_free_army == 0 && this.state.turn == 0) {
       this.setState({ turn: 1 });
     } else if (this.state.agent2_free_army == 0 && this.state.turn == 1) {
-      this.setState({ turn: 0 });
-      this.setState({ selecting: states.assignArmy });
-      this.calculateArmy();
+      this.endTurn()
+      //console.log(this.state.agent1_free_army) //prints 0
+      //console.log(this.state.agent2_free_army) //prints 0
     }
   }
 
   reduceFreeArmyCallBack() {
+    console.log(this.state.agent1_free_army) //prints 0
+    console.log(this.state.agent2_free_army) //prints 0
+    
+    //console.log(Math.floor(this.agent1.totalTerrs / 3)) //prints 4 
     if (this.state.agent1_free_army == 0 && this.state.turn == 0) {
       this.setState({ selecting: states.ATTACK });
     } else if (this.state.agent2_free_army == 0 && this.state.turn == 1) {
@@ -136,6 +144,7 @@ export default class GameState extends React.Component {
         {this.state.map.renderMap(
           (territory) => {
             if (this.state.selecting == states.ATTACK) {
+              console.log("here")
               if (territory.getAgent() !== this.getTurn() || territory.getArmy() === 1
                 || territory.getAdjEnemy().length === 0) {
                 //alert 
@@ -149,13 +158,13 @@ export default class GameState extends React.Component {
                 !this.state.attacker.getAdjTerritory(territory)) {
                 //alert
               } else {
-                this.setState({ victim: territory });
                 if(this.turn === 0){
                   this.agent1.performAttack(this.state.attacker , territory);
                 }else{
                   this.agent2.performAttack(this.state.attacker , territory);     
                 }
-                this.endTurn()
+                this.setState({ victim: territory },this.endTurn);
+                
               }
 
             } else if (this.state.selecting == states.INITIAL_ASSIGN) {
