@@ -167,7 +167,9 @@ export default class MapEgypt {
       <div className="map">
         {this.territories.map((t) => {
           let bg_color =
-            attacker && t.name == attacker.name
+            selecting == "initialAssign"
+              ? "turquoise"
+              : attacker && t.name == attacker.name
               ? "green"
               : victim && t.name == victim.name
               ? "red"
