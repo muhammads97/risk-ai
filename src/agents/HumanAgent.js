@@ -20,7 +20,7 @@ export default class HumanAgent {
       attackingTerritory.removeArmy(attarmy-1);
       defendingTerritory.removeArmy(defarmy-1);
     }else if(attarmy > defarmy){
-      defendingTerritory.setPlayer(attackingTerritory.getPlayer());
+      defendingTerritory.setAgent(attackingTerritory.getAgent());
       defendingTerritory.removeArmy(defarmy-(attarmy-defarmy+1));
       attackingTerritory.removeArmy(attarmy-1);
     }else{
@@ -33,7 +33,7 @@ export default class HumanAgent {
   assignArmy(gameState) {
     this.currMap = gameState.getMap();
     gameState.selectTerritory("assign", (selectedTerritory) => {
-      if(selectedTerritory.getPlayer != gameState.getTurn()){
+      if(selectedTerritory.getAgent() != gameState.getTurn()){
         /*
           alert you cant choose this terr as  assign terr
         */

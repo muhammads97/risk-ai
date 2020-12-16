@@ -69,15 +69,13 @@ export default class GameState extends React.Component {
     }
     this.agent1.totalTerrs = agent1TerritoryCount;
     this.agent2.totalTerrs = allTerritories.length - agent1TerritoryCount;
-    //console.log(this.agent1.totalTerrs)
-    //console.log(this.agent2.totalTerrs)
+    
 
     this.setState({
       agent1_free_army: this.state.agent1_free_army - agent1TerritoryCount,
       agent2_free_army: this.state.agent2_free_army - allTerritories.length + agent1TerritoryCount,
     })
-    //randomly assign territories to agent
-    //add one army to each territory and set the remaining free army in the state
+    
   }
 
   calculateArmy() {
@@ -95,7 +93,7 @@ export default class GameState extends React.Component {
   }
 
   getTurn() {
-    return this.turn;
+    return this.state.turn;
     
   }
   endTurn() {
@@ -148,9 +146,21 @@ export default class GameState extends React.Component {
               if (territory.getAgent() !== this.getTurn() || territory.getArmy() === 1
                 || territory.getAdjEnemy().length === 0) {
                 //alert 
+                if (territory.getAgent() !== this.getTurn())
+                {
+                  console.log("here1")
+                  console.log(this.getTurn())
+                  console.log(territory.getAgent())
+
+                }
+                if (territory.getArmy() === 1)
+                console.log("here2")
+                if (territory.getAdjEnemy().length === 0)
+                console.log("here3")
               } else {
                 this.setState({ attacker: territory });
                 this.setState({ selecting: states.VICTIM });
+                console.log("heree")
               }
 
             } else if (this.state.selecting == states.VICTIM) {
