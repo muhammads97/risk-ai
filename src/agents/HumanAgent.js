@@ -63,7 +63,8 @@ export default class HumanAgent {
     if (
       territory.name in this.currentTerritories 
     ) {
-      if(territory.getArmy() !== 1){
+      if(territory.getArmy() !== 1 && territory.getAdjEnemy().length !== 0){
+        //console.log(territory.getAdjEnemy().length)
         this.attackingTerritory = territory;
         this.gameState = states.VICTIM;
         return false;

@@ -74,6 +74,7 @@ export default class EgyptMap extends React.Component {
     return this.state.turn;
   }
   endTurn() {
+    this.turn.gameState = states.ASSIGN_ARMY;
     this.turn = this.turn.id === 1 ? this.agent2 : this.agent1;
     this.turn.setDefendingTerritory(null);
     this.turn.setAttackingTerritory(null);
@@ -81,27 +82,20 @@ export default class EgyptMap extends React.Component {
   //TODO make the endturn only when the user press endturn
   territorySelectHandler = (territory) => {
     let changeTurn = this.turn.updateState(territory);
+    if (changeTurn) {
+      this.endTurn();
+    }
     this.setState(
       {
         dummy: this.state.dummy + 1,
       },
       () => {
-        if (changeTurn) {
-          this.endTurn();
-        }
+        
       }
     );
   };
 
-  nonHumanTurnHandler() {
-    if (this.turn.gameState == states.INITIAL_ASSIGN) {
-      //call function to assign all army and change state
-    } else if (this.turn.gameState == states.ASSIGN_ARMY) {
-      //call function to assign all army and change state
-    } else if (this.turn.gameState == states.ATTACK) {
-      //call function to attack and end turn
-    }
-  }
+  
 
   
   render() {
@@ -132,11 +126,17 @@ export default class EgyptMap extends React.Component {
           })}
         </div>
         {this.turn.name !== "Human" && (
-          <button className="button advance" onClick={this.nonHumanTurnHandler}>
+          <button className="button advance" onClick={() => this.territorySelectHandler(null)}>
             {this.turn.gameState == states.INITIAL_ASSIGN ||
             this.turn.gameState == states.ASSIGN_ARMY
               ? "Assign Army"
               : "attack"}
+          </button>
+        )}
+        {this.turn.name === "Human" && this.turn.gameState !== states.INITIAL_ASSIGN 
+         && this.turn.gameState !== states.ASSIGN_ARMY && (
+          <button className="button endturn" onClick={() => this.endTurn()}>
+            {"End Turn"}
           </button>
         )}
         <h3 className="game-state">
