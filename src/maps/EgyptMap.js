@@ -11,7 +11,7 @@ const states = {
 };
 
 const initialArmy = 20;
-// states: initialAssign, assign, attack, victim
+
 export default class EgyptMap extends React.Component {
   constructor(props) {
     super(props);
@@ -78,7 +78,7 @@ export default class EgyptMap extends React.Component {
     this.turn.setDefendingTerritory(null);
     this.turn.setAttackingTerritory(null);
   }
-
+  //TODO make the endturn only when the user press endturn
   territorySelectHandler = (territory) => {
     let changeTurn = this.turn.updateState(territory);
     this.setState(
@@ -103,7 +103,7 @@ export default class EgyptMap extends React.Component {
     }
   }
 
-  //TODO nzbt 3dd el total territories after attack
+  
   render() {
     return (
       <div className={"gameContainer"}>
@@ -114,16 +114,7 @@ export default class EgyptMap extends React.Component {
               this.turn.getAttackingTerritory() === t ? "green" : bg_color;
             bg_color =
               this.turn.getDefendingTerritory() === t ? "red" : bg_color;
-            // let bg_color =
-            //   this.state.selecting == "initialAssign"
-            //     ? "turquoise"
-            //     : this.state.attacker && t.name == this.state.attacker.name
-            //       ? "green"
-            //       : this.state.victim && t.name == this.state.victim.name
-            //         ? "red"
-            //         : t.player != null
-            //           ? t.player.color
-            //           : "turquoise";
+
             return (
               <button
                 className={"territoryBtn"}
@@ -132,7 +123,7 @@ export default class EgyptMap extends React.Component {
                   left: this.locations[t.name].x,
                   backgroundColor: bg_color,
                 }}
-                disabled={!this.state.selecting}
+                disabled={this.turn.name !== "Human"}
                 onClick={() => this.territorySelectHandler(t)}
               >
                 {t.army}

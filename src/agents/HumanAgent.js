@@ -71,10 +71,21 @@ export default class HumanAgent {
       }
     } else if (
       this.gameState === states.ATTACK &&
-      territory.name in this.currentTerritories
+      territory.name in this.currentTerritories 
+      && territory.getArmy() !== 1
     ) {
       this.attackingTerritory = territory;
       this.gameState = states.VICTIM;
+      return false;
+    } else if (
+      this.gameState === states.VICTIM &&
+      territory.name in this.currentTerritories
+    ) {
+      if(territory.getArmy() !== 1){
+        this.attackingTerritory = territory;
+      }else{
+        this.attackingTerritory = null;
+      }
       return false;
     } else if (
       this.gameState === states.VICTIM &&
@@ -112,7 +123,7 @@ export default class HumanAgent {
         this.defendingTerritory.name
       ] = this.defendingTerritory;
       this.defendingTerritory.setAgent(this);
-      this.defendingTerritory.removeArmy(defarmy - (attarmy - defarmy + 1));
+      this.defendingTerritory.removeArmy(defarmy - (attarmy - defarmy ));
       this.attackingTerritory.removeArmy(attarmy - 1);
     } else {
       this.attackingTerritory.removeArmy(attarmy - 1);
