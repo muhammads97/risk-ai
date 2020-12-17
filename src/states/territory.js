@@ -18,48 +18,36 @@ export default class Territory {
   }
   removeArmy(army) {
     this.army -= army;
-    if (this.army <= 0) return true; // agent lost this territory
-    return false; //agent still owns this territory
   }
   getArmy() {
     return this.army;
   }
-
+  //does this make duplicates ?
   addAdjTerritory(territory) {
     this.adj.push(territory);
     if (!territory.isAdj(this.name)) {
       territory.addAdjTerritory(this);
     }
   }
-  removeAdjTerritory(name) {
-    let index = -1;
-    this.adj.forEach((t, i) => {
-      if (t.name == name) {
-        index = i;
-        return;
-      }
-    });
-    this.adj.splice(index, 1);
+  
+  isAdj(name) {
+    return this.adj.find((t) => t.name == name) != null;
   }
+
   getAdj() {
     return this.adj;
   }
 
   isAdjEnemy(victim) {
-    return  this.adj.filter((t) => t.agent.getId() !== this.agent.getId()).find((t) => victim.name === t.name) != null; 
+    return  this.getAdjEnemy().find((t) => victim.name === t.name) != null; 
   }
 
-  getAdjOwned() {}
+  getAdjEnemy() {
+    return this.adj.filter((t) => t.agent.getId() !== this.agent.getId())
+  }
 
   getName() {
     return this.name;
   }
 
-  isAdj(name) {
-    return this.adj.find((t) => t.name == name) != null;
-  }
-
-  getAdjTerritory(ter) {
-    return this.adj.find((t) => t.name == ter.name);
-  }
 }
