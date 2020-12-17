@@ -68,6 +68,18 @@
   position: absolute;
 }
 
+.advance {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.game-state {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .App-link {
   color: #61dafb;
 }

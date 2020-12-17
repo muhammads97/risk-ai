@@ -1,21 +1,21 @@
 import * as React from "react";
 import egypt from "../egypt/egypt.png";
 import "../App.css";
-import EgyptTerritories from '../helper/EgyptTerritories'
+import EgyptTerritories from "../helper/EgyptTerritories";
 
 const states = {
   INITIAL_ASSIGN: "initialAssign",
   ATTACK: "attack",
   VICTIM: "victim",
-  ASSIGN_ARMY: "assignArmy"
-}
+  ASSIGN_ARMY: "assignArmy",
+};
 
 const initialArmy = 20;
 // states: initialAssign, assign, attack, victim
 export default class EgyptMap extends React.Component {
   constructor(props) {
     super(props);
-    let egyptTerritories = new EgyptTerritories()
+    let egyptTerritories = new EgyptTerritories();
     this.territories = egyptTerritories.getTerritories();
     this.locations = egyptTerritories.getLocations();
     this.agent1 = props.agent1;
@@ -27,7 +27,7 @@ export default class EgyptMap extends React.Component {
       attacker: null,
       victim: null,
       selecting: states.INITIAL_ASSIGN,
-      dummy: 0
+      dummy: 0,
     };
   }
 
@@ -49,9 +49,9 @@ export default class EgyptMap extends React.Component {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
       }
-    }
+    };
     let allTerritories = [...this.territories];
-    shuffleArray(allTerritories)
+    shuffleArray(allTerritories);
     for (let i = 0; i < allTerritories.length; i++) {
       if (i % 2) {
         allTerritories[i].setAgent(this.agent2);
@@ -64,44 +64,56 @@ export default class EgyptMap extends React.Component {
     }
     this.agent1.setFreeArmies(initialArmy - this.agent1.getTerritoryCount());
     this.agent2.setFreeArmies(initialArmy - this.agent2.getTerritoryCount());
-    this.turn = this.agent1
+    this.turn = this.agent1;
     this.setState({
-      dummy: this.state.dummy + 1
-    })
-  
+      dummy: this.state.dummy + 1,
+    });
   }
-
-
 
   getTurn() {
     return this.state.turn;
   }
   endTurn() {
-    this.turn = (this.turn.id === 1 ? this.agent2 : this.agent1)
+    this.turn = this.turn.id === 1 ? this.agent2 : this.agent1;
     this.turn.setDefendingTerritory(null);
     this.turn.setAttackingTerritory(null);
   }
 
   territorySelectHandler = (territory) => {
-    let changeTurn = this.turn.updateState(territory)
-    this.setState({
-      dummy: this.state.dummy + 1
-    },
-    ()=>{
-      if (changeTurn) {
-        this.endTurn()
-      } 
-    })
+    let changeTurn = this.turn.updateState(territory);
+    this.setState(
+      {
+        dummy: this.state.dummy + 1,
+      },
+      () => {
+        if (changeTurn) {
+          this.endTurn();
+        }
+      }
+    );
+  };
+
+  nonHumanTurnHandler() {
+    if (this.turn.gameState == states.INITIAL_ASSIGN) {
+      //call function to assign all army and change state
+    } else if (this.turn.gameState == states.ASSIGN_ARMY) {
+      //call function to assign all army and change state
+    } else if (this.turn.gameState == states.ATTACK) {
+      //call function to attack and end turn
+    }
   }
-  //TODO nzbt 3dd el total territories after attack 
+
+  //TODO nzbt 3dd el total territories after attack
   render() {
     return (
       <div className={"gameContainer"}>
         <div className="map">
           {this.territories.map((t) => {
-             let bg_color = t.getAgent().getId() == 1 ? "yellow" : "blue";
-             bg_color = this.turn.getAttackingTerritory() === t ? "green": bg_color;
-             bg_color = this.turn.getDefendingTerritory() === t ? "red": bg_color;
+            let bg_color = t.getAgent().getId() == 1 ? "yellow" : "blue";
+            bg_color =
+              this.turn.getAttackingTerritory() === t ? "green" : bg_color;
+            bg_color =
+              this.turn.getDefendingTerritory() === t ? "red" : bg_color;
             // let bg_color =
             //   this.state.selecting == "initialAssign"
             //     ? "turquoise"
@@ -121,24 +133,41 @@ export default class EgyptMap extends React.Component {
                   backgroundColor: bg_color,
                 }}
                 disabled={!this.state.selecting}
-                onClick={() =>
-                  this.territorySelectHandler(t)}
+                onClick={() => this.territorySelectHandler(t)}
               >
                 {t.army}
               </button>
             );
           })}
         </div>
+        {this.turn.name !== "Human" && (
+          <button className="button advance" onClick={this.nonHumanTurnHandler}>
+            {this.turn.gameState == states.INITIAL_ASSIGN ||
+            this.turn.gameState == states.ASSIGN_ARMY
+              ? "Assign Army"
+              : "attack"}
+          </button>
+        )}
+        <h3 className="game-state">
+          {this.turn.name +
+            " " +
+            this.turn.getId() +
+            " " +
+            (this.turn.gameState == states.INITIAL_ASSIGN
+              ? `Assigning army to territory, remaining: ${this.turn.freeArmies}`
+              : this.turn.gameState == states.ASSIGN_ARMY
+              ? `Assigning army to territory, remaining: ${this.turn.freeArmies}`
+              : this.turn.gameState == states.ATTACK
+              ? `Attacking ${
+                  this.turn.name == "Human"
+                    ? "select your attacking territory"
+                    : "press attack to procceed"
+                }`
+              : this.turn.gameState == states.VICTIM
+              ? "Attacking, Select your victim"
+              : null)}
+        </h3>
       </div>
     );
   }
-
 }
-
-
-
-
-
-
-
-
