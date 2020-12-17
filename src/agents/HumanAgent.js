@@ -46,47 +46,33 @@ export default class HumanAgent {
     this.freeArmies = freeArmy;
   }
 
-  attack() {}
-  updateState(territory) {
+  //common step with diff algs and with agents will do all the assignment and returns true
+  assignArmy(territory){
     if (
-      this.gameState === states.INITIAL_ASSIGN &&
       territory.name in this.currentTerritories
     ) {
       territory.addArmy(1);
       this.freeArmies--;
       if (this.freeArmies === 0) {
-        this.gameState = states.ASSIGN_ARMY;
         this.calculateBonusArmy();
         return true;
       }
-    } else if (
-      this.gameState === states.ASSIGN_ARMY &&
-      territory.name in this.currentTerritories
-    ) {
-      territory.addArmy(1);
-      this.freeArmies--;
-      if (this.freeArmies === 0) {
-        this.gameState = states.ATTACK;
-        return false;
-      }
-    } else if (
-      this.gameState === states.ATTACK &&
+  }
+  }
+  attack(territory) {
+    if (
       territory.name in this.currentTerritories 
-      && territory.getArmy() !== 1
-    ) {
-      this.attackingTerritory = territory;
-      this.gameState = states.VICTIM;
-      return false;
-    } else if (
-      this.gameState === states.VICTIM &&
-      territory.name in this.currentTerritories
     ) {
       if(territory.getArmy() !== 1){
         this.attackingTerritory = territory;
+        this.gameState = states.VICTIM;
+        return false;
       }else{
         this.attackingTerritory = null;
+        this.gameState = states.ATTACK;
+        return false;
       }
-      return false;
+      
     } else if (
       this.gameState === states.VICTIM &&
       this.attackingTerritory.isAdjEnemy(territory)
@@ -98,6 +84,31 @@ export default class HumanAgent {
       return true;
     } else {
       //alert
+      return false;
+    }
+  }
+  updateState(territory) {
+    if (
+      this.gameState === states.INITIAL_ASSIGN ||
+      this.gameState === states.ASSIGN_ARMY
+    ) {
+      
+      let finished = this.assignArmy(territory);
+      if(finished){
+        if(this.gameState === states.INITIAL_ASSIGN){
+          this.gameState = states.ASSIGN_ARMY ;
+          return true;
+        }else{
+          this.gameState = states.ATTACK ;
+          return false;
+        }
+      } 
+    } else{
+      let flag = this.attack(territory);
+      if(flag && this.gameState === states.ASSIGN_ARMY){
+        return true;
+      }
+      return false;
     }
   }
 
