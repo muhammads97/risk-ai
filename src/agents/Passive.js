@@ -1,50 +1,109 @@
 import React from 'react'
 import AbstractAgent from './AbstractAgent';
 
-export default class Passive extends AbstractAgent {
+const states = {
+    INITIAL_ASSIGN: "initialAssign",
+    ATTACK: "attack",
+    VICTIM: "victim",
+    ASSIGN_ARMY: "assignArmy",
+  };
 
-    constructor(props) {
-        super(props);
-    }
+export default class Passive  {
 
-    attack(game) {
-        let map = game.getMap();
-        let numOfOwnTerritory = this.get_own_territories(map, game);
-        let newArmy = this.get_new_army(numOfOwnTerritory);
-        this.addingNewArmy(newArmy, map);
-        game.setMap(map);
-    }
+    constructor(id) {
+        this.name = "Passive";
+        this.id = id;
+        this.freeArmies = 0;
+        this.attackingTerritory = null;
+        this.currentTerritories = {};
+        this.defendingTerritory = null;
+        this.gameState = states.INITIAL_ASSIGN;
+      }
 
-    get_own_territories(map, game) {
-        // return the number of his own territories.
-        let temp = map.getTerritories();
-        let ret = 0;
-        for (let x in temp) {
-            if (x.getAgent() === game.getTurn()) {
-                ret++;
-            }
-        }
-        return ret;
-    }
+      getId() {
+        return this.id;
+      }
+      getDefendingTerritory() {
+        return this.defendingTerritory;
+      }
+      getAttackingTerritory() {
+        return this.attackingTerritory;
+      }
+      setDefendingTerritory(territory) {
+        this.defendingTerritory = territory;
+      }
+      setAttackingTerritory(territory) {
+        this.attackingTerritory = territory;
+      }
+      addTerritory(territory) {
+        this.currentTerritories[territory.name] = territory;
+      }
+      removeTerritory(territory) {
+        delete this.currentTerritories[territory.name];
+      }
+    
+      getTerritoryCount() {
+        return Object.getOwnPropertyNames(this.currentTerritories).length;
+      }
+    
+      setFreeArmies(freeArmy) {
+        this.freeArmies = freeArmy;
+      }
 
-    get_new_army(numOfOwnTerritory) {
-        // return bonus army.
-        return Math.floor(numOfOwnTerritory / 3);
-    }
-
-    addingNewArmy(newArmy, map) {
-        // add new Army to the territory with the lowest number of army.
-        let temp = map.getTerritories();
-        let mini = 100;
-        let y = temp[0];
-        for (let x in temp) {
-            if (x.getPlayer().get_Type() === "Passive") {
-                if (x.getArmy() < mini) {
-                    y = x;
-                    mini = x.getArmy();
+      assignArmy(territory){
+          
+            let keys = Object.keys(this.currentTerritories);
+            let minArmy = 2;
+            let minTerr = null;
+            keys.forEach((key)=>{
+                let terr = this.currentTerritories[key];
+                if(terr.getArmy() < minArmy){
+                    console.log("here");
+                    minArmy = terr.getArmy();
+                    minTerr = terr;
                 }
-            }
+            })
+            minTerr.addArmy(this.freeArmies);
+            this.calculateBonusArmy();
+      return true;
+      }
+      attack(territory) {
+        this.gameState = states.ASSIGN_ARMY
+        return true ;
+            //DO nothing
         }
-        if (mini !== 100) y.addArmy(newArmy);
+      
+      updateState(territory) {
+        if (
+          this.gameState === states.INITIAL_ASSIGN ||
+          this.gameState === states.ASSIGN_ARMY
+        ) {
+          
+          let finished = this.assignArmy(territory);
+          if(finished){
+            if(this.gameState === states.INITIAL_ASSIGN){
+              this.gameState = states.ASSIGN_ARMY ;
+              return true;
+            }else{
+              this.gameState = states.ATTACK ;
+              return false;
+            }
+          } 
+        } else{
+          let flag = this.attack(territory);
+          if(flag && this.gameState === states.ASSIGN_ARMY){
+            return true;
+          }
+          return false;
+        }
+      }
+    
+      calculateBonusArmy() {
+        this.freeArmies = Math.max(3, Math.floor(this.getTerritoryCount() / 3));
+      }
+    
+
+
     }
-}
+    
+

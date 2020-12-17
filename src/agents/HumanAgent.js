@@ -117,7 +117,7 @@ export default class HumanAgent {
     this.freeArmies = Math.max(3, Math.floor(this.getTerritoryCount() / 3));
   }
 
-  //FIXME
+
 
   //fixed in all agents
   performAttack() {
@@ -141,8 +141,8 @@ export default class HumanAgent {
       this.attackingTerritory.removeArmy(attarmy - 1);
       this.defendingTerritory.removeArmy(attarmy - 1);
     }
-    // need to update the total army  and total terrs in both agents
+    
   }
 }
 
-//we need to loop on both the assign and the attack till they return true
+

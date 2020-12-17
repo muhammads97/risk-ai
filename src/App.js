@@ -2,7 +2,7 @@ import "./App.css";
 import * as React from "react";
 import EgyptMap from "./maps/EgyptMap";
 import HumanAgent from "./agents/HumanAgent";
-
+import Passive from "./agents/Passive";
 
 
 function App() {
@@ -37,7 +37,10 @@ function App() {
             >
               Human
         </button>
-            <button className="agentButton">Passive</button>
+            <button 
+              className="agentButton"
+              onClick={() => (agent === 0 ? setAgent1(new Passive(1)) : setAgent2(new Passive(2)))}
+            >Passive</button>
             <button className="agentButton">Aggressive</button>
             <button className="agentButton">pacifist</button>
           </div>
