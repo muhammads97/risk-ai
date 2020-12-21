@@ -8,47 +8,8 @@ const states = {
     ASSIGN_ARMY: "assignArmy",
   };
 
-export default class Passive  {
+export default class Passive  extends AbstractAgent{
 
-    constructor(id) {
-        this.name = "Passive";
-        this.id = id;
-        this.freeArmies = 0;
-        this.attackingTerritory = null;
-        this.currentTerritories = {};
-        this.defendingTerritory = null;
-        this.gameState = states.INITIAL_ASSIGN;
-      }
-
-      getId() {
-        return this.id;
-      }
-      getDefendingTerritory() {
-        return this.defendingTerritory;
-      }
-      getAttackingTerritory() {
-        return this.attackingTerritory;
-      }
-      setDefendingTerritory(territory) {
-        this.defendingTerritory = territory;
-      }
-      setAttackingTerritory(territory) {
-        this.attackingTerritory = territory;
-      }
-      addTerritory(territory) {
-        this.currentTerritories[territory.name] = territory;
-      }
-      removeTerritory(territory) {
-        delete this.currentTerritories[territory.name];
-      }
-    
-      getTerritoryCount() {
-        return Object.getOwnPropertyNames(this.currentTerritories).length;
-      }
-    
-      setFreeArmies(freeArmy) {
-        this.freeArmies = freeArmy;
-      }
 
       assignArmy(territory){
           
@@ -58,49 +19,22 @@ export default class Passive  {
             keys.forEach((key)=>{
                 let terr = this.currentTerritories[key];
                 if(terr.getArmy() < minArmy){
-                    console.log("here");
+                    //console.log("here");
                     minArmy = terr.getArmy();
                     minTerr = terr;
                 }
             })
             minTerr.addArmy(this.freeArmies);
-            this.calculateBonusArmy();
+            //this.calculateBonusArmy();
       return true;
       }
       attack(territory) {
-        this.gameState = states.ASSIGN_ARMY
+        this.gameState = states.ASSIGN_ARMY;
         return true ;
             //DO nothing
         }
       
-      updateState(territory) {
-        if (
-          this.gameState === states.INITIAL_ASSIGN ||
-          this.gameState === states.ASSIGN_ARMY
-        ) {
-          
-          let finished = this.assignArmy(territory);
-          if(finished){
-            if(this.gameState === states.INITIAL_ASSIGN){
-              this.gameState = states.ASSIGN_ARMY ;
-              return true;
-            }else{
-              this.gameState = states.ATTACK ;
-              return false;
-            }
-          } 
-        } else{
-          let flag = this.attack(territory);
-          if(flag && this.gameState === states.ASSIGN_ARMY){
-            return true;
-          }
-          return false;
-        }
-      }
-    
-      calculateBonusArmy() {
-        this.freeArmies = Math.max(3, Math.floor(this.getTerritoryCount() / 3));
-      }
+      
     
 
 

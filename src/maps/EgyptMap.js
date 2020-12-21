@@ -74,25 +74,30 @@ export default class EgyptMap extends React.Component {
     return this.state.turn;
   }
   endTurn() {
+    //console.log("from end turn")
     this.turn.gameState = states.ASSIGN_ARMY;
     this.turn = this.turn.id === 1 ? this.agent2 : this.agent1;
+    this.turn.calculateBonusArmy();
     this.turn.setDefendingTerritory(null);
     this.turn.setAttackingTerritory(null);
   }
-  //TODO make the endturn only when the user press endturn
+  //TODO make the agents in the attack mode till they 
+  // make a no attack step thats when u make the endturn here
   territorySelectHandler = (territory) => {
     let changeTurn = this.turn.updateState(territory);
-    if (changeTurn) {
+    if (changeTurn && this.turn.gameState !== states.VICTIM) {
       this.endTurn();
     }
-    this.setState(
-      {
-        dummy: this.state.dummy + 1,
-      },
-      () => {
-        
-      }
-    );
+      this.setState(
+        {
+          dummy: this.state.dummy + 1,
+        },
+        () => {
+          
+        }
+      );
+
+
   };
 
   
@@ -105,9 +110,9 @@ export default class EgyptMap extends React.Component {
           {this.territories.map((t) => {
             let bg_color = t.getAgent().getId() == 1 ? "yellow" : "blue";
             bg_color =
-              this.turn.getAttackingTerritory() === t ? "green" : bg_color;
-            bg_color =
-              this.turn.getDefendingTerritory() === t ? "red" : bg_color;
+              this.turn.getAttackingTerritory() === t ? "green" 
+              : this.turn.getDefendingTerritory() === t ? "red"
+              : bg_color;
 
             return (
               <button
@@ -135,7 +140,13 @@ export default class EgyptMap extends React.Component {
         )}
         {this.turn.name === "Human" && this.turn.gameState !== states.INITIAL_ASSIGN 
          && this.turn.gameState !== states.ASSIGN_ARMY && (
-          <button className="button endturn" onClick={() => this.endTurn()}>
+          <button className="button endturn" onClick={() => {
+            this.endTurn()
+            this.setState(
+            {
+              dummy: this.state.dummy + 1,
+            }
+          );}}>
             {"End Turn"}
           </button>
         )}

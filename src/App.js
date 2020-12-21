@@ -33,13 +33,15 @@ function App() {
           <div className="col">
             <button
               className="agentButton"
-              onClick={() => (agent === 0 ? setAgent1(new HumanAgent(1)) : setAgent2(new HumanAgent(2)))}
+              onClick={() => (agent === 0 ? setAgent1(new HumanAgent(1,"Human")) 
+              : setAgent2(new HumanAgent(2,"Human")))}
             >
               Human
         </button>
             <button 
               className="agentButton"
-              onClick={() => (agent === 0 ? setAgent1(new Passive(1)) : setAgent2(new Passive(2)))}
+              onClick={() => (agent === 0 ? setAgent1(new Passive(1,"Passive")) 
+              : setAgent2(new Passive(2,"Passive")))}
             >Passive</button>
             <button className="agentButton">Aggressive</button>
             <button className="agentButton">pacifist</button>
