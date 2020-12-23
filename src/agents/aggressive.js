@@ -1,56 +1,64 @@
 import React from 'react'
 import AbstractAgent from './AbstractAgent';
 
+const states = {
+    INITIAL_ASSIGN: "initialAssign",
+    ATTACK: "attack",
+    VICTIM: "victim",
+    ASSIGN_ARMY: "assignArmy",
+};
+
 export default class Aggressive extends AbstractAgent {
+    
+    
+    assignArmy(territory) {
+        
+        let maxTerr = this.getMaxArmy()
+        maxTerr.addArmy(this.freeArmies);
+        this.freeArmies = 0;
+        //this.calculateBonusArmy();
+        return true;
 
-    constructor(props) {
-        super(props);
     }
-
-    attack(game) {
-        let map = game.getMap();
-        let numOfOwnTerritory = this.get_own_territories(map, game);
-        let newArmy = this.get_new_army(numOfOwnTerritory);
-        this.addingNewArmy(newArmy, map);
-        game.setMap(map);
-        this.attacker();
-    }
-
-    get_own_territories(map, game) {
-        // return the number of his own territories.
-        let temp = map.getTerritories();
-        let ret = 0;
-        for (let x in temp) {
-            if (x.getAgent() === game.getTurn()) {
-                ret++;
-            }
+    attack(territory) {
+        let maxTerr = this.getMaxArmy()
+        if(maxTerr == null || maxTerr.getArmy() == 1 || maxTerr.getAdjEnemy().length === 0){
+            this.gameState = states.ASSIGN_ARMY;
+            return true;
         }
-        return ret;
+        let maxdef = this.getMaxEnemy(maxTerr)
+        this.attackingTerritory = maxTerr;
+        this.defendingTerritory = maxdef;
+        this.performAttack();
+        this.gameState = states.VICTIM;
+        return true;
     }
 
-    get_new_army(numOfOwnTerritory) {
-        // return bonus army.
-        return Math.floor(numOfOwnTerritory / 3);
-    }
-
-    addingNewArmy(newArmy, map) {
-        // add new Army to the territory with the lowest number of army.
-        let temp = map.getTerritories();
-        let maxi = 0;
-        let y = temp[0];
-        for (let x in temp) {
-            if (x.getPlayer().get_Type() === "Aggressive") {
-                if (x.getArmy() > maxi) {
-                    y = x;
-                    maxi = x.getArmy();
-                }
+    getMaxArmy(){
+        let keys = Object.keys(this.currentTerritories);
+        let maxArmy = 1;
+        let maxTerr = null;
+        keys.forEach((key) => {
+            let terr = this.currentTerritories[key];
+            if (terr.getArmy() >= maxArmy) {
+                //console.log("here");
+                maxArmy = terr.getArmy();
+                maxTerr = terr;
             }
-        }
-        if (maxi !== 0) y.addArmy(newArmy);
+        })
+        return maxTerr
+    }
+    getMaxEnemy(terr){
+        let adjEnemy = terr.getAdjEnemy();
+        let maxArmy = 1;
+        let maxTerr = null;
+        adjEnemy.forEach((t) =>{
+            if(t.getArmy() >= maxArmy){
+                maxArmy = t.getArmy();
+                maxTerr = t;
+            }
+        })
+        return maxTerr;
     }
 
-
-    attacker() {
-
-    }
 }

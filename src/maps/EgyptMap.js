@@ -73,6 +73,7 @@ export default class EgyptMap extends React.Component {
   getTurn() {
     return this.state.turn;
   }
+  // TODO add function in the abstract to indicate the end of the game  
   endTurn() {
     //console.log("from end turn")
     this.turn.gameState = states.ASSIGN_ARMY;
@@ -130,17 +131,20 @@ export default class EgyptMap extends React.Component {
             );
           })}
         </div>
-        {this.turn.name !== "Human" && (
-          <button className="button advance" onClick={() => this.territorySelectHandler(null)}>
+        {(
+          <button className="button advance" onClick={() => this.territorySelectHandler(null)}
+          disabled={this.turn.name === "Human"}>
             {this.turn.gameState == states.INITIAL_ASSIGN ||
             this.turn.gameState == states.ASSIGN_ARMY
               ? "Assign Army"
               : "attack"}
           </button>
         )}
-        {this.turn.name === "Human" && this.turn.gameState !== states.INITIAL_ASSIGN 
-         && this.turn.gameState !== states.ASSIGN_ARMY && (
-          <button className="button endturn" onClick={() => {
+        {(
+          <button className="button endturn" 
+          disabled={ this.turn.name !== "Human" || this.turn.gameState === states.INITIAL_ASSIGN 
+          || this.turn.gameState === states.ASSIGN_ARMY}
+          onClick={() => {
             this.endTurn()
             this.setState(
             {

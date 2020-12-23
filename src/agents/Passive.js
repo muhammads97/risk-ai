@@ -13,20 +13,11 @@ export default class Passive  extends AbstractAgent{
 
       assignArmy(territory){
           
-            let keys = Object.keys(this.currentTerritories);
-            let minArmy = 2;
-            let minTerr = null;
-            keys.forEach((key)=>{
-                let terr = this.currentTerritories[key];
-                if(terr.getArmy() < minArmy){
-                    //console.log("here");
-                    minArmy = terr.getArmy();
-                    minTerr = terr;
-                }
-            })
-            minTerr.addArmy(this.freeArmies);
-            //this.calculateBonusArmy();
-      return true;
+        let minTerr = this.getMinArmy()
+        minTerr.addArmy(this.freeArmies);
+        this.freeArmies =0;
+        //this.calculateBonusArmy();
+        return true;
       }
       attack(territory) {
         this.gameState = states.ASSIGN_ARMY;
@@ -34,7 +25,20 @@ export default class Passive  extends AbstractAgent{
             //DO nothing
         }
       
-      
+      getMinArmy(){
+        let keys = Object.keys(this.currentTerritories);
+        let minArmy = 2;
+        let minTerr = null;
+        keys.forEach((key)=>{
+            let terr = this.currentTerritories[key];
+            if(terr.getArmy() < minArmy){
+                //console.log("here");
+                minArmy = terr.getArmy();
+                minTerr = terr;
+            }
+        })
+        return minTerr
+      }
     
 
 

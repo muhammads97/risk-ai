@@ -3,6 +3,7 @@ import * as React from "react";
 import EgyptMap from "./maps/EgyptMap";
 import HumanAgent from "./agents/HumanAgent";
 import Passive from "./agents/Passive";
+import Aggressive from "./agents/aggressive";
 
 
 function App() {
@@ -42,8 +43,16 @@ function App() {
               className="agentButton"
               onClick={() => (agent === 0 ? setAgent1(new Passive(1,"Passive")) 
               : setAgent2(new Passive(2,"Passive")))}
-            >Passive</button>
-            <button className="agentButton">Aggressive</button>
+            >
+              Passive
+              </button>
+            <button 
+            className="agentButton" 
+            onClick={() => (agent === 0 ? setAgent1(new Aggressive(1,"Aggressive")) 
+              : setAgent2(new Aggressive(2,"Aggressive")))}
+              >
+                Aggressive
+                </button>
             <button className="agentButton">pacifist</button>
           </div>
           <div className="col">
