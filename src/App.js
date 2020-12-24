@@ -4,7 +4,7 @@ import EgyptMap from "./maps/EgyptMap";
 import HumanAgent from "./agents/HumanAgent";
 import Passive from "./agents/Passive";
 import Aggressive from "./agents/aggressive";
-
+import pacifist from"./agents/pacifist";
 
 function App() {
   const Maps = {
@@ -53,7 +53,12 @@ function App() {
               >
                 Aggressive
                 </button>
-            <button className="agentButton">pacifist</button>
+            <button className="agentButton"
+            onClick={() => (agent === 0 ? setAgent1(new pacifist(1,"pacifist")) 
+            : setAgent2(new pacifist(2,"pacifist")))}
+            >
+              pacifist
+              </button>
           </div>
           <div className="col">
             <button className="agentButton">greedy</button>

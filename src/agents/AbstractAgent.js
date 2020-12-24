@@ -106,5 +106,12 @@ export default class AbstractAgent {
       setFreeArmies(freeArmy) {
         this.freeArmies = freeArmy;
       }
+      
+      getEnemyTerritories(){
+        let keys = Object.keys(this.currentTerritories);
+        let name = keys.find(key =>  this.currentTerritories[key].getAdjEnemy().length !== 0);
+        let enemyTerrs = this.currentTerritories[name].getAdjEnemy();
+        return enemyTerrs[0].getAgent().currentTerritories;
+      }
 
 }

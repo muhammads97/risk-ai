@@ -10,7 +10,8 @@ const states = {
 
 export default class Aggressive extends AbstractAgent {
     
-    
+    //assign all the free army
+    //return true
     assignArmy(territory) {
         
         let maxTerr = this.getMaxArmy()
@@ -20,6 +21,14 @@ export default class Aggressive extends AbstractAgent {
         return true;
 
     }
+    //perform algorithm
+    //if attack -> this.attackingTerritory , this.defendingTerritory
+    //this.gameState = states.VICTIM; attack
+    //return true
+    //else -> this.attackingTerritory , this.defendingTerritory =null
+    //this.gameState = states.ASSIGN_ARMY; end turn
+    //return true
+
     attack(territory) {
         let maxTerr = this.getMaxArmy()
         if(maxTerr == null || maxTerr.getArmy() == 1 || maxTerr.getAdjEnemy().length === 0){
@@ -52,7 +61,7 @@ export default class Aggressive extends AbstractAgent {
         let adjEnemy = terr.getAdjEnemy();
         let maxArmy = 1;
         let maxTerr = null;
-        adjEnemy.forEach((t) =>{
+        adjEnemy.forEach(t =>{
             if(t.getArmy() >= maxArmy){
                 maxArmy = t.getArmy();
                 maxTerr = t;

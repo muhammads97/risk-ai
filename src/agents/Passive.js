@@ -27,11 +27,11 @@ export default class Passive  extends AbstractAgent{
       
       getMinArmy(){
         let keys = Object.keys(this.currentTerritories);
-        let minArmy = 2;
+        let minArmy = -1;
         let minTerr = null;
         keys.forEach((key)=>{
             let terr = this.currentTerritories[key];
-            if(terr.getArmy() < minArmy){
+            if(terr.getArmy() < minArmy || minArmy === -1){
                 //console.log("here");
                 minArmy = terr.getArmy();
                 minTerr = terr;

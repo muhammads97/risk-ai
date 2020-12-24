@@ -73,6 +73,9 @@
   bottom: 0;
   right: 0;
 }
+.endturn {
+  position: relative;
+}
 
 .game-state {
   position: absolute;
