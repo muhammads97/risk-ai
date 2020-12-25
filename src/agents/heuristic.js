@@ -5,12 +5,12 @@ export function g(state, prevState) {
   let army = 0;
   let prevArmy = 0;
 
-  state.territories.keys().forEach((k) => {
+  Object.keys(state.territories).forEach((k) => {
     if ((state.territories[k].agent = state.agent)) {
       army += state.territories[k].army;
     }
   });
-  prevState.territories.keys().forEach((k) => {
+  Object.keys(prevState.territories).forEach((k) => {
     if ((state.territories[k].agent = state.agent)) {
       prevArmy += state.territories[k].army;
     }
@@ -23,12 +23,12 @@ export function h(state) {
   let terr_left = 0;
   let armyOwned = 0;
   let enimy_army = 0;
-  let protected = 0;
+  let protectedTerr = 0;
   let longestAttackAvailable = 0;
   let unreachableEnimy = 0;
   let id = state.agent;
   let potential_attacks = {};
-  state.territories.keys().forEach((k) => {
+  Object.keys(state.territories).forEach((k) => {
     if (state.territories[k].agent == id) {
       terr_owned++;
       armyOwned += state.territories[k].army;
@@ -39,7 +39,7 @@ export function h(state) {
           potential_attacks[a] = 1;
         }
       });
-      if (p) protected++;
+      if (p) protectedTerr++;
     } else {
       terr_left++;
       enimy_army += state.territories[k].army;
@@ -52,7 +52,7 @@ export function h(state) {
       if (p) unreachableEnimy++;
     }
   });
-  potential_attacks.keys().forEach((k) => {
+  Object.keys(potential_attacks).forEach((k) => {
     visited = {};
     dfs(state, k, 0);
   });
@@ -60,7 +60,7 @@ export function h(state) {
   let total_terr = terr_left + terr_owned;
   let total_army = enimy_army + armyOwned;
   longestAttackAvailable /= terr_left;
-  protected /= terr_owned;
+  protectedTerr /= terr_owned;
   unreachableEnimy /= terr_left;
   terr_owned /= total_terr;
   terr_left /= total_terr;
@@ -72,20 +72,20 @@ export function h(state) {
   terr_left *= 1000;
   enimy_army *= 10;
   armyOwned *= 0.1;
-  protected *= 0.01;
+  protectedTerr *= 0.01;
   unreachableEnimy *= 100;
   longestAttackAvailable *= 0.01;
 
   return (
     (terr_left + enimy_army + unreachableEnimy) /
-    (terr_owned + armyOwned + protected + longestAttackAvailable)
+    (terr_owned + armyOwned + protectedTerr + longestAttackAvailable)
   );
 }
 
 function dfs(state, enimy, d) {
   visited[enimy] = 1;
   if (d + 1 > max_depth) max_depth = d + 1;
-  state.territories[enimy.name].adj.forEach((a) => {
+  state.territories[enimy].adj.forEach((a) => {
     if (state.territories[a].agent == state.agent && visited[a] != 1) {
       dfs(state, a, d + 1);
     }
