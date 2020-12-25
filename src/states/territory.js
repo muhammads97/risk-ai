@@ -22,14 +22,14 @@ export default class Territory {
   getArmy() {
     return this.army;
   }
-  //does this make duplicates ?
+  //does this make duplicates ? no
   addAdjTerritory(territory) {
     this.adj.push(territory);
     if (!territory.isAdj(this.name)) {
       territory.addAdjTerritory(this);
     }
   }
-  
+
   isAdj(name) {
     return this.adj.find((t) => t.name == name) != null;
   }
@@ -39,15 +39,17 @@ export default class Territory {
   }
 
   isAdjEnemy(victim) {
-    return  this.getAdjEnemy().find((t) => victim.name === t.name) != null; 
+    return this.getAdjEnemy().find((t) => victim.name === t.name) != null;
   }
 
   getAdjEnemy() {
-    return this.adj.filter((t) => t.agent.getId() !== this.agent.getId())
+    return this.adj.filter((t) => t.agent.getId() !== this.agent.getId());
+  }
+  getAdjOwned() {
+    return this.adj.filter((t) => t.agent.getId() == this.agent.getId());
   }
 
   getName() {
     return this.name;
   }
-
 }
