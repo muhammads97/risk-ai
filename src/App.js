@@ -1,6 +1,7 @@
 import "./App.css";
 import * as React from "react";
 import EgyptMap from "./maps/EgyptMap";
+import USMap from "./maps/USMap";
 import HumanAgent from "./agents/HumanAgent";
 import Passive from "./agents/Passive";
 import Aggressive from "./agents/aggressive";
@@ -24,7 +25,9 @@ function App() {
         <button className="button" onClick={() => setMap(Maps.EGYPT)}>
           Egypt
         </button>
-        <button className="button">USA</button>
+        <button className="button" onClick={() => setMap(Maps.USA)}>
+          USA
+        </button>
       </div>
     );
   };
@@ -106,7 +109,7 @@ function App() {
         ) : map === Maps.EGYPT ? (
           <EgyptMap agent1={agent1} agent2={agent2} />
         ) : (
-          <div></div>
+          <USMap agent1={agent1} agent2={agent2} />
         )}
       </div>
     </div>
