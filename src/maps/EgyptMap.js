@@ -2,6 +2,7 @@ import * as React from "react";
 import egypt from "../egypt/egypt.png";
 import "../App.css";
 import EgyptTerritories from "../helper/EgyptTerritories";
+import { h } from "../agents/heuristic";
 
 const states = {
   INITIAL_ASSIGN: "initialAssign",
@@ -111,7 +112,7 @@ export default class EgyptMap extends React.Component {
       terr["army"] = t.army;
       territories[t.name] = terr;
     });
-    return { agent: agentId, territories };
+    return { agent: agentId, territories: territories };
   }
 
   render() {

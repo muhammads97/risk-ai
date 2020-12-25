@@ -1,74 +1,102 @@
 let visited = {};
-let depth = {};
 let max_depth = 0;
-export default function distanceToGoal(territories, attacker, defender) {
-  let attAgent = attacker.agent;
-  let defAgent = defender.agent;
-  let attArmy = attacker.army;
-  let defArmy = defender.army;
-  let willAcquire = attArmy > defArmy;
-  let number_of_terr_before_attack = attAgent.getTerritoryCount();
-  let number_of_terr_after_attack = willAcquire
-    ? number_of_terr_before_attack + 1
-    : number_of_terr_before_attack;
-  let armyLoss = willAcquire ? attArmy - defArmy : attArmy - 1;
-  let number_of_terr_left_to_acquire =
-    attArmy > defArmy
-      ? defAgent.getTerritoryCount() - 1
-      : defAgent.getTerritoryCount();
 
-  //number of territories unreachable to enimy
-  let number_of_unreachable = 0;
-  attAgent.currentTerritories.keys().forEach((k) => {
-    if (attAgent.currentTerritories[k].getAdjEnemy().length == 0) {
-      number_of_unreachable++;
+export function g(state, prevState) {
+  let army = 0;
+  let prevArmy = 0;
+
+  Object.keys(state.territories).forEach((k) => {
+    if ((state.territories[k].agent = state.agent)) {
+      army += state.territories[k].army;
     }
   });
-  if (willAcquire) {
-    let number_of_unreachable_after_attack = 0;
-    attAgent.currentTerritories.keys().forEach((k) => {
-      let adjEnemy = attAgent.currentTerritories[k].getAdjEnemy();
-      if (adjEnemy.length == 0) {
-        number_of_unreachable_after_attack++;
-      } else {
-        if (adjEnemy.length == 1) {
-          if (adjEnemy[0].name == defender.name) {
-            number_of_unreachable_after_attack++;
-          }
-        }
-      }
-    });
-    if (defender.getAdjOwned().length == 0) {
-      number_of_unreachable_after_attack++;
+  Object.keys(prevState.territories).forEach((k) => {
+    if ((state.territories[k].agent = state.agent)) {
+      prevArmy += state.territories[k].army;
     }
-    if (number_of_unreachable_after_attack > number_of_unreachable) {
-      number_of_unreachable = number_of_unreachable_after_attack;
-    }
-  }
-
-  //longest path
-  visited = {};
-  depth = {};
-  max_depth = 0;
-  calculate_longest_path(defender);
+  });
+  return prevArmy - army;
 }
 
-function calculate_longest_path(defender, parent) {
-  visited[defender.name] = 1;
-  depth[defender.name] = parent == null ? 1 : depth[parent] + 1;
-  if (depth[defender.name] > max_depth) max_depth = depth[defender.name];
-  defender.getAdjOwned().forEach((t) => {
-    if (visited[t.name] !== 1) {
-      calculate_longest_path(t, defender);
+export function h(state) {
+  let terr_owned = 0;
+  let terr_left = 0;
+  let armyOwned = 0;
+  let enimy_army = 0;
+  let protectedTerr = 0;
+  let longestAttackAvailable = 0;
+  let unreachableEnimy = 0;
+  let id = state.agent;
+  let potential_attacks = {};
+  Object.keys(state.territories).forEach((k) => {
+    if (state.territories[k].agent == id) {
+      terr_owned++;
+      armyOwned += state.territories[k].army;
+      let p = true;
+      state.territories[k].adj.forEach((a) => {
+        if (state.territories[a].agent != id) {
+          p = false;
+          potential_attacks[a] = 1;
+        }
+      });
+      if (p) protectedTerr++;
+    } else {
+      terr_left++;
+      enimy_army += state.territories[k].army;
+      let p = true;
+      state.territories[k].adj.forEach((a) => {
+        if (state.territories[a].agent == id) {
+          p = false;
+        }
+      });
+      if (p) unreachableEnimy++;
+    }
+  });
+  Object.keys(potential_attacks).forEach((k) => {
+    visited = {};
+    dfs(state, k, 0);
+  });
+  longestAttackAvailable = max_depth;
+  let total_terr = terr_left + terr_owned;
+  let total_army = enimy_army + armyOwned;
+  longestAttackAvailable /= terr_left;
+  protectedTerr /= terr_owned;
+  unreachableEnimy /= terr_left;
+  terr_owned /= total_terr;
+  terr_left /= total_terr;
+  armyOwned /= total_army;
+  enimy_army /= total_army;
+
+  //weights
+  terr_owned *= 0.001;
+  terr_left *= 1000;
+  enimy_army *= 10;
+  armyOwned *= 0.1;
+  protectedTerr *= 0.01;
+  unreachableEnimy *= 100;
+  longestAttackAvailable *= 0.01;
+
+  return (
+    (terr_left + enimy_army + unreachableEnimy) /
+    (terr_owned + armyOwned + protectedTerr + longestAttackAvailable)
+  );
+}
+
+function dfs(state, enimy, d) {
+  visited[enimy] = 1;
+  if (d + 1 > max_depth) max_depth = d + 1;
+  state.territories[enimy].adj.forEach((a) => {
+    if (state.territories[a].agent == state.agent && visited[a] != 1) {
+      dfs(state, a, d + 1);
     }
   });
 }
 
 // x
-// 1 o o o
-// 1 1 1
-// x   5
-// x   10
+// o o o o
+// x x x
+// x   x
+// x   x
 //     x
 
 // number of territories after attack 8 --
@@ -90,7 +118,7 @@ function calculate_longest_path(defender, parent) {
 // longest path/ total enimy
 
 // function to create gamestate as an object :
-// {agent id, territories: {name:{army, adj:[name], agentid}}}
+// {agent id, territories: {name:{army, adj:[name], agent}}}
 // function to deep clone object
 
 // for each terr that can attack: 2
