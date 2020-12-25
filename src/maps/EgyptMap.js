@@ -1,5 +1,4 @@
 import * as React from "react";
-import egypt from "../egypt/egypt.png";
 import "../App.css";
 import EgyptTerritories from "../helper/EgyptTerritories";
 import { h } from "../agents/heuristic";
@@ -74,6 +73,7 @@ export default class EgyptMap extends React.Component {
   getTurn() {
     return this.state.turn;
   }
+
   // TODO add function in the abstract to indicate the end of the game
   endTurn() {
     //console.log("from end turn")
@@ -83,6 +83,7 @@ export default class EgyptMap extends React.Component {
     this.turn.setDefendingTerritory(null);
     this.turn.setAttackingTerritory(null);
   }
+
   //TODO make the agents in the attack mode till they
   // make a no attack step thats when u make the endturn here
   territorySelectHandler = (territory) => {
@@ -118,9 +119,9 @@ export default class EgyptMap extends React.Component {
   render() {
     return (
       <div className={"gameContainer"}>
-        <div className="map">
+        <div className="egypt-map">
           {this.territories.map((t) => {
-            let bg_color = t.getAgent().getId() == 1 ? "yellow" : "blue";
+            let bg_color = t.getAgent().getId() === 1 ? "yellow" : "blue";
             bg_color =
               this.turn.getAttackingTerritory() === t
                 ? "green"
@@ -147,11 +148,11 @@ export default class EgyptMap extends React.Component {
         {
           <button
             className="button advance"
-            onClick={() => this.territorySelectHandler(null)}
+            onClick={() => this.territorySelectHandler(this.getStateObject())}
             disabled={this.turn.name === "Human"}
           >
-            {this.turn.gameState == states.INITIAL_ASSIGN ||
-            this.turn.gameState == states.ASSIGN_ARMY
+            {this.turn.gameState === states.INITIAL_ASSIGN ||
+            this.turn.gameState === states.ASSIGN_ARMY
               ? "Assign Army"
               : "attack"}
           </button>
@@ -179,17 +180,17 @@ export default class EgyptMap extends React.Component {
             " " +
             this.turn.getId() +
             " " +
-            (this.turn.gameState == states.INITIAL_ASSIGN
+            (this.turn.gameState === states.INITIAL_ASSIGN
               ? `Assigning army to territory, remaining: ${this.turn.freeArmies}`
-              : this.turn.gameState == states.ASSIGN_ARMY
+              : this.turn.gameState === states.ASSIGN_ARMY
               ? `Assigning army to territory, remaining: ${this.turn.freeArmies}`
-              : this.turn.gameState == states.ATTACK
+              : this.turn.gameState === states.ATTACK
               ? `Attacking ${
-                  this.turn.name == "Human"
+                  this.turn.name === "Human"
                     ? "select your attacking territory"
                     : "press attack to procceed"
                 }`
-              : this.turn.gameState == states.VICTIM
+              : this.turn.gameState === states.VICTIM
               ? "Attacking, Select your victim"
               : null)}
         </h3>

@@ -75,7 +75,9 @@ export function h(state) {
   protectedTerr *= 0.01;
   unreachableEnimy *= 100;
   longestAttackAvailable *= 0.01;
-
+  if (terr_owned + armyOwned + protectedTerr + longestAttackAvailable == 0) {
+    return 10000000000;
+  }
   return (
     (terr_left + enimy_army + unreachableEnimy) /
     (terr_owned + armyOwned + protectedTerr + longestAttackAvailable)
