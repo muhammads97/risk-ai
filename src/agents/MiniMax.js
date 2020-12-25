@@ -9,7 +9,7 @@ const states = {
 };
 
 const INFINITY = 10000000000;
-const MAX_DEPTH = 4;
+const MAX_DEPTH = 5;
 
 export default class Minimax extends AbstractAgent {
   minimax(state, depth, alpha, beta) {
@@ -141,13 +141,11 @@ export default class Minimax extends AbstractAgent {
     let bestTerr = "";
     children.forEach((child) => {
       let value = this.minimax(child, 0, INFINITY, -INFINITY);
-      console.log(child.assignTo, value);
       if (value < bestVal) {
         bestVal = value;
         bestTerr = child.assignTo;
       }
     });
-    console.log("assign to ", bestTerr);
     this.currentTerritories[bestTerr].addArmy(this.freeArmies);
     this.freeArmies = 0;
     return true;
@@ -159,7 +157,6 @@ export default class Minimax extends AbstractAgent {
     let bestChild = null;
     children.forEach((child) => {
       let value = this.minimax(child, 0, INFINITY, -INFINITY);
-      console.log(child.attacker, child.defender, value);
       if (value < bestVal) {
         bestVal = value;
         bestChild = child;
@@ -169,7 +166,6 @@ export default class Minimax extends AbstractAgent {
       // no attack
       this.gameState = states.ASSIGN_ARMY;
     } else {
-      console.log(bestChild.attacker, bestChild.defender);
       this.attackingTerritory = this.currentTerritories[bestChild.attacker];
       this.attackingTerritory.getAdjEnemy().every((e) => {
         if (e.name == bestChild.defender) {

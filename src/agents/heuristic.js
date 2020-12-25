@@ -36,7 +36,7 @@ export function h(state) {
       state.territories[k].adj.forEach((a) => {
         if (state.territories[a].agent != id) {
           p = false;
-          potential_attacks[a] = 1;
+          if (state.territories[k].army > 1) potential_attacks[a] = 1;
         }
       });
       if (p) protectedTerr++;
@@ -56,6 +56,12 @@ export function h(state) {
     visited = {};
     dfs(state, k, 0);
   });
+  if (terr_owned + armyOwned + protectedTerr + longestAttackAvailable == 0) {
+    return 10000000000;
+  }
+  if (terr_left + enimy_army + unreachableEnimy == 0) {
+    return 0;
+  }
   longestAttackAvailable = max_depth;
   let total_terr = terr_left + terr_owned;
   let total_army = enimy_army + armyOwned;
@@ -75,9 +81,7 @@ export function h(state) {
   protectedTerr *= 0.01;
   unreachableEnimy *= 100;
   longestAttackAvailable *= 0.01;
-  if (terr_owned + armyOwned + protectedTerr + longestAttackAvailable == 0) {
-    return 10000000000;
-  }
+
   return (
     (terr_left + enimy_army + unreachableEnimy) /
     (terr_owned + armyOwned + protectedTerr + longestAttackAvailable)
