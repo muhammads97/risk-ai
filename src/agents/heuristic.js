@@ -16,6 +16,7 @@ export default function distanceToGoal(territories, attacker, defender) {
     attArmy > defArmy
       ? defAgent.getTerritoryCount() - 1
       : defAgent.getTerritoryCount();
+
   //number of territories unreachable to enimy
   let number_of_unreachable = 0;
   attAgent.currentTerritories.keys().forEach((k) => {
@@ -49,6 +50,7 @@ export default function distanceToGoal(territories, attacker, defender) {
   visited = {};
   depth = {};
   max_depth = 0;
+  calculate_longest_path(defender);
 }
 
 function calculate_longest_path(defender, parent) {
@@ -62,7 +64,44 @@ function calculate_longest_path(defender, parent) {
   });
 }
 
-// x x x x x
-// x x x x x
 // x
-// x
+// 1 o o o
+// 1 1 1
+// x   5
+// x   10
+//     x
+
+// number of territories after attack 8 --
+// number of territories left to acquire 2 ++
+// army lost in the attack ++
+// number of protected territories after attack --
+// longest enimy path --
+// number of unreachable enimy territories ++
+
+//  tleft * high weight       armyloss + protectedEnimy
+// ---------------------  +  -----------------------------
+//       tattack                protected + longestPath
+
+// tleft / total terr
+// tattack  / total terr
+// armyloss / attacker total army
+// protected enimy / total enimy
+// my protected / my total
+// longest path/ total enimy
+
+// function to create gamestate as an object :
+// {agent id, territories: {name:{army, adj:[name], agentid}}}
+// function to deep clone object
+
+// for each terr that can attack: 2
+//    for each terr that can be attacked: 5 (10)
+//
+
+// g:
+// cumulative army loss
+//
+
+// free army = 9
+// assign 9 into one terr
+// level:
+//

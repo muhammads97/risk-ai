@@ -73,7 +73,7 @@ export default class EgyptMap extends React.Component {
   getTurn() {
     return this.state.turn;
   }
-  // TODO add function in the abstract to indicate the end of the game  
+  // TODO add function in the abstract to indicate the end of the game
   endTurn() {
     //console.log("from end turn")
     this.turn.gameState = states.ASSIGN_ARMY;
@@ -82,28 +82,38 @@ export default class EgyptMap extends React.Component {
     this.turn.setDefendingTerritory(null);
     this.turn.setAttackingTerritory(null);
   }
-  //TODO make the agents in the attack mode till they 
+  //TODO make the agents in the attack mode till they
   // make a no attack step thats when u make the endturn here
   territorySelectHandler = (territory) => {
     let changeTurn = this.turn.updateState(territory);
     if (changeTurn && this.turn.gameState !== states.VICTIM) {
       this.endTurn();
     }
-      this.setState(
-        {
-          dummy: this.state.dummy + 1,
-        },
-        () => {
-          
-        }
-      );
-
-
+    this.setState(
+      {
+        dummy: this.state.dummy + 1,
+      },
+      () => {}
+    );
   };
 
-  
+  getStateObject() {
+    let agentId = this.turn.id;
+    let territories = {};
+    this.territories.forEach((t) => {
+      let terr = {};
+      let adj = [];
+      t.getAdj().forEach((a) => {
+        adj.push(a.name);
+      });
+      terr["adj"] = adj;
+      terr["agent"] = t.agent.id;
+      terr["army"] = t.army;
+      territories[t.name] = terr;
+    });
+    return { agent: agentId, territories };
+  }
 
-  
   render() {
     return (
       <div className={"gameContainer"}>
@@ -111,9 +121,11 @@ export default class EgyptMap extends React.Component {
           {this.territories.map((t) => {
             let bg_color = t.getAgent().getId() == 1 ? "yellow" : "blue";
             bg_color =
-              this.turn.getAttackingTerritory() === t ? "green" 
-              : this.turn.getDefendingTerritory() === t ? "red"
-              : bg_color;
+              this.turn.getAttackingTerritory() === t
+                ? "green"
+                : this.turn.getDefendingTerritory() === t
+                ? "red"
+                : bg_color;
 
             return (
               <button
@@ -131,29 +143,36 @@ export default class EgyptMap extends React.Component {
             );
           })}
         </div>
-        {(
-          <button className="button advance" onClick={() => this.territorySelectHandler(null)}
-          disabled={this.turn.name === "Human"}>
+        {
+          <button
+            className="button advance"
+            onClick={() => this.territorySelectHandler(null)}
+            disabled={this.turn.name === "Human"}
+          >
             {this.turn.gameState == states.INITIAL_ASSIGN ||
             this.turn.gameState == states.ASSIGN_ARMY
               ? "Assign Army"
               : "attack"}
           </button>
-        )}
-        {(
-          <button className="button endturn" 
-          disabled={ this.turn.name !== "Human" || this.turn.gameState === states.INITIAL_ASSIGN 
-          || this.turn.gameState === states.ASSIGN_ARMY}
-          onClick={() => {
-            this.endTurn()
-            this.setState(
-            {
-              dummy: this.state.dummy + 1,
+        }
+        {
+          <button
+            className="button endturn"
+            disabled={
+              this.turn.name !== "Human" ||
+              this.turn.gameState === states.INITIAL_ASSIGN ||
+              this.turn.gameState === states.ASSIGN_ARMY
             }
-          );}}>
+            onClick={() => {
+              this.endTurn();
+              this.setState({
+                dummy: this.state.dummy + 1,
+              });
+            }}
+          >
             {"End Turn"}
           </button>
-        )}
+        }
         <h3 className="game-state">
           {this.turn.name +
             " " +
