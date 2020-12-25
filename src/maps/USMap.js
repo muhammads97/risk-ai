@@ -1,6 +1,6 @@
 import * as React from "react";
 import "../App.css";
-import EgyptTerritories from "../helper/EgyptTerritories";
+import USTerritories from "../helper/USTerritories";
 import {h} from "../agents/heuristic";
 
 const states = {
@@ -10,18 +10,18 @@ const states = {
     ASSIGN_ARMY: "assignArmy",
 };
 
-const initialArmy = 20;
+const initialArmy = 30;
 
-export default class EgyptMap extends React.Component {
+export default class USMap extends React.Component {
     constructor(props) {
         super(props);
-        let egyptTerritories = new EgyptTerritories();
-        this.territories = egyptTerritories.getTerritories();
-        this.locations = egyptTerritories.getLocations();
+        let usTerritories = new USTerritories();
+        this.territories = usTerritories.getTerritories();
+        this.locations = usTerritories.getLocations();
         this.agent1 = props.agent1;
         this.agent2 = props.agent2;
         this.turn = null;
-        this.initialArmy = 20;
+        this.initialArmy = 30;
 
         this.state = {
             attacker: null,
@@ -120,9 +120,9 @@ export default class EgyptMap extends React.Component {
     render() {
         return (
             <div className={"gameContainer"}>
-                <div className="egypt-map">
+                <div className="us-map">
                     {this.territories.map((t) => {
-                        let bg_color = t.getAgent().getId() === 1 ? "yellow" : "blue";
+                        let bg_color = t.getAgent().getId() == 1 ? "yellow" : "blue";
                         bg_color =
                             this.turn.getAttackingTerritory() === t
                                 ? "green"

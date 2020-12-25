@@ -5,35 +5,34 @@ const w = 1000;
 export default class EgyptTerritories {
     constructor() {
         this.locations = {
-            cairo: { x: (w * 6) / 10, y: (h * 1) / 6 },
-            alexandria: { x: (w * 45) / 100, y: (h * 2) / 20 },
-            aswan: { x: (w * 72) / 100, y: (h * 80) / 100 },
-            asyut: { x: (w * 57) / 100, y: (h * 45) / 100 },
-            beheira: { x: (w * 50) / 100, y: (h * 2) / 20 },
-            beni_suef: { x: (w * 50) / 100, y: (h * 28) / 100 },
-            dakahlia: { x: (w * 59) / 100, y: (h * 7) / 100 },
-            damietta: { x: (w * 61) / 100, y: (h * 3) / 100 },
-            faiyum: { x: (w * 50) / 100, y: (h * 25) / 100 },
-            gharbia: { x: (w * 55) / 100, y: (h * 8.5) / 100 },
-            giza: { x: w * 0.4, y: h * 0.28 },
-            ismailia: { x: w * 0.67, y: h * 0.12 },
-            kafr_el_sheikh: { x: w * 0.55, y: h * 0.04 },
-            matruh: { x: w * 0.25, y: h * 0.15 },
-            minya: { x: w * 0.5, y: h * 0.32 },
-            monufia: { x: w * 0.549, y: h * 0.12 },
-            new_valley: { x: w * 0.3, y: h * 0.65 },
-            north_sinai: { x: w * 0.75, y: h * 0.12 },
-            port_said: { x: w * 0.67, y: h * 0.06 },
-            qalyubia: { x: w * 0.568, y: h * 0.137 },
-            qena: { x: (w * 70) / 100, y: (h * 55) / 100 },
-            red_sea: { x: (w * 80) / 100, y: (h * 60) / 100 },
-            sharqia: { x: (w * 6) / 10, y: h * 0.115 },
-            sohag: { x: (w * 624) / 1000, y: (h * 52) / 100 },
-            south_sinai: { x: w * 0.8, y: h * 0.3 },
-            suez: { x: w * 0.65, y: h * 0.2 },
-            luxor: { x: w * 0.683, y: h * 0.585 },
+            cairo: {x: (w * 6) / 10, y: (h) / 6},
+            alexandria: {x: (w * 45) / 100, y: (h * 2) / 20},
+            aswan: {x: (w * 72) / 100, y: (h * 80) / 100},
+            asyut: {x: (w * 57) / 100, y: (h * 45) / 100},
+            beheira: {x: (w * 50) / 100, y: (h * 2) / 20},
+            beni_suef: {x: (w * 50) / 100, y: (h * 28) / 100},
+            dakahlia: {x: (w * 59) / 100, y: (h * 7) / 100},
+            damietta: {x: (w * 61) / 100, y: (h * 3) / 100},
+            faiyum: {x: (w * 50) / 100, y: (h * 25) / 100},
+            gharbia: {x: (w * 55) / 100, y: (h * 8.5) / 100},
+            giza: {x: w * 0.4, y: h * 0.28},
+            ismailia: {x: w * 0.67, y: h * 0.12},
+            kafr_el_sheikh: {x: w * 0.55, y: h * 0.04},
+            matruh: {x: w * 0.25, y: h * 0.15},
+            minya: {x: w * 0.5, y: h * 0.32},
+            monufia: {x: w * 0.549, y: h * 0.12},
+            new_valley: {x: w * 0.3, y: h * 0.65},
+            north_sinai: {x: w * 0.75, y: h * 0.12},
+            port_said: {x: w * 0.67, y: h * 0.06},
+            qalyubia: {x: w * 0.568, y: h * 0.137},
+            qena: {x: (w * 70) / 100, y: (h * 55) / 100},
+            red_sea: {x: (w * 80) / 100, y: (h * 60) / 100},
+            sharqia: {x: (w * 6) / 10, y: h * 0.115},
+            sohag: {x: (w * 624) / 1000, y: (h * 52) / 100},
+            south_sinai: {x: w * 0.8, y: h * 0.3},
+            suez: {x: w * 0.65, y: h * 0.2},
+            luxor: {x: w * 0.683, y: h * 0.585},
         };
-
 
 
         let cairo = new Territory("cairo");
@@ -153,11 +152,12 @@ export default class EgyptTerritories {
             luxor,
         ];
     }
-    getTerritories(){
+
+    getTerritories() {
         return this.territories;
     }
 
-    getLocations(){
+    getLocations() {
         return this.locations;
     }
 }
