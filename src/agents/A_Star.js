@@ -1,6 +1,6 @@
 import React from 'react'
 import AbstractAgent from './AbstractAgent';
-import heuristic from "./heuristic";
+import { g, h } from "./heuristic";
 import EgyptMap from "./maps/EgyptMap";
 import PriorityQueue from "priorityqueue";
 import cloneDeep from "lodash.clonedeep";
@@ -76,13 +76,18 @@ export default class Aggressive extends AbstractAgent {
         return state;
     }
     A_star(freeArmies, state) {
-
-        var pq = PriorityQueue();
+        var best_path = null;
+        const comparator = (state1, state2)=>{
+            let f1 = state1.h + state1.g;
+            let f2 = state2.h + state2.g;
+            return (f1 < f2 ? 1 : f1 > f2 ? -1 : 0);
+        };
+        var pq = PriorityQueue({comparator});
         var hashset = new HashSet();
-        pq.push({ f: 0, state: state, path: [] });
+        pq.push({ h: 0, g: 0, state: state, path: [] });
         var pqtop = cloneDeep(pq.top);
         var cur_st = pqtop.state;
-        var cur_dist = pqtop.f;
+        var cur_g = pqtop.g;
         var path = pqtop.path;
         pq.pop();
         hashset.add(cur_st);
@@ -91,17 +96,24 @@ export default class Aggressive extends AbstractAgent {
             if (allTers[att]["agent"] === this.getId())
                 for (let def in allTers) {
                     if (allTers[def]["agent"] !== this.getId()) {
-
-                        let f = new heuristic(ownT, att, def); // ToDo get f = g + h  from salah. how??
-                        let dcstate = cloneDeep(cur_st);
+                        let nextState = cloneDeep(cur_st);
                         let copypath = cloneDeep(path);
-                        dcstate.territories[att]["agent"] += freeArmies;
+                        nextState.territories[att]["agent"] += freeArmies;
                         copypath.push(att);
                         copypath.push(def);
-                        dcstate = simulateAttack(dcstate, att, def)
-                        pq.push({ f: f, state: dcstate, path: copypath });
+                        nextState = simulateAttack(nextState, att, def)
+                        let newg = cur_g + g(nextState, cur_st);
+                        let newh = h(nextState);
+                        pq.push({ h: newh, g: newg, state: nextState, path: copypath });
                     }
                 }
+        }
+        const allAquired = (territories)=>{
+            for (let att in allTers) {
+                if (allTers[att]["agent"] !== this.getId())
+                    return false;
+            }
+            return true;
         }
         while (!pq.empty) {
             let cur_entry = pq.top;
@@ -109,21 +121,26 @@ export default class Aggressive extends AbstractAgent {
             var cur_st = cur_entry.state;
             var path = cur_entry.path;
             hashset.add(cur_st);
+            if(allAquired(cur_st.territories)){
+                return path;
+            }
             for (let att in allTers) {
                 if (allTers[att]["agent"] === this.getId())
                     for (let def in allTers) {
                         if (allTers[def]["agent"] !== this.getId()) {
-                            let f = new heuristic(ownT, att, def); // ToDo get f = g + h  from salah. how??
-                            let dcstate = cloneDeep(cur_st);
+                            let nextState = cloneDeep(cur_st);
                             let copypath = cloneDeep(path);
                             copypath.push(def);
-                            dcstate = simulateAttack(dcstate, att, def)
-                            if(!hashset.contains(cur_st))
-                                pq.push({ f: f, state: dcstate, path: copypath });
+                            nextState = simulateAttack(nextState, att, def)
+                            let newg = cur_g + g(nextState, cur_st);
+                            let newh = h(nextState);
+                            if (!hashset.contains(nextState))
+                                pq.push({ h: newh, g: newg, state: nextState, path: copypath });
                         }
                     }
             }
         }
+        
     }
 
 }
