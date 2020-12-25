@@ -4,13 +4,14 @@ import EgyptMap from "./maps/EgyptMap";
 import HumanAgent from "./agents/HumanAgent";
 import Passive from "./agents/Passive";
 import Aggressive from "./agents/aggressive";
-import pacifist from"./agents/pacifist";
+import pacifist from "./agents/pacifist";
+import Minimax from "./agents/MiniMax";
 
 function App() {
   const Maps = {
     EGYPT: "egypt",
-    USA: "usa"
-  }
+    USA: "usa",
+  };
   const [map, setMap] = React.useState(null);
   const [agent1, setAgent1] = React.useState(null);
   const [agent2, setAgent2] = React.useState(null);
@@ -22,10 +23,11 @@ function App() {
       <div className="row">
         <button className="button" onClick={() => setMap(Maps.EGYPT)}>
           Egypt
-      </button>
+        </button>
         <button className="button">USA</button>
-      </div>);
-  }
+      </div>
+    );
+  };
   const chooseAgentType = (agent) => {
     return (
       <div className="col">
@@ -34,42 +36,64 @@ function App() {
           <div className="col">
             <button
               className="agentButton"
-              onClick={() => (agent === 0 ? setAgent1(new HumanAgent(1,"Human")) 
-              : setAgent2(new HumanAgent(2,"Human")))}
+              onClick={() =>
+                agent === 0
+                  ? setAgent1(new HumanAgent(1, "Human"))
+                  : setAgent2(new HumanAgent(2, "Human"))
+              }
             >
               Human
-        </button>
-            <button 
+            </button>
+            <button
               className="agentButton"
-              onClick={() => (agent === 0 ? setAgent1(new Passive(1,"Passive")) 
-              : setAgent2(new Passive(2,"Passive")))}
+              onClick={() =>
+                agent === 0
+                  ? setAgent1(new Passive(1, "Passive"))
+                  : setAgent2(new Passive(2, "Passive"))
+              }
             >
               Passive
-              </button>
-            <button 
-            className="agentButton" 
-            onClick={() => (agent === 0 ? setAgent1(new Aggressive(1,"Aggressive")) 
-              : setAgent2(new Aggressive(2,"Aggressive")))}
-              >
-                Aggressive
-                </button>
-            <button className="agentButton"
-            onClick={() => (agent === 0 ? setAgent1(new pacifist(1,"pacifist")) 
-            : setAgent2(new pacifist(2,"pacifist")))}
+            </button>
+            <button
+              className="agentButton"
+              onClick={() =>
+                agent === 0
+                  ? setAgent1(new Aggressive(1, "Aggressive"))
+                  : setAgent2(new Aggressive(2, "Aggressive"))
+              }
+            >
+              Aggressive
+            </button>
+            <button
+              className="agentButton"
+              onClick={() =>
+                agent === 0
+                  ? setAgent1(new pacifist(1, "pacifist"))
+                  : setAgent2(new pacifist(2, "pacifist"))
+              }
             >
               pacifist
-              </button>
+            </button>
           </div>
           <div className="col">
             <button className="agentButton">greedy</button>
             <button className="agentButton"> A* search</button>
             <button className="agentButton"> real-time A*</button>
-            <button className="agentButton">alpha-beta pruning</button>
+            <button
+              className="agentButton"
+              onClick={() =>
+                agent === 0
+                  ? setAgent1(new Minimax(1, "Minimax"))
+                  : setAgent2(new Minimax(2, "Minimax"))
+              }
+            >
+              alpha-beta pruning
+            </button>
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
   return (
     <div className="App">
       <div className="App-body">
@@ -79,12 +103,11 @@ function App() {
           chooseAgentType(0)
         ) : agent2 == null ? (
           chooseAgentType(1)
-        ) :
-              (map === Maps.EGYPT ? 
-              <EgyptMap agent1={agent1} agent2={agent2} /> :
-                <div></div>
-                )
-        }
+        ) : map === Maps.EGYPT ? (
+          <EgyptMap agent1={agent1} agent2={agent2} />
+        ) : (
+          <div></div>
+        )}
       </div>
     </div>
   );

@@ -147,7 +147,7 @@ export default class EgyptMap extends React.Component {
         {
           <button
             className="button advance"
-            onClick={() => this.territorySelectHandler(null)}
+            onClick={() => this.territorySelectHandler(this.getStateObject())}
             disabled={this.turn.name === "Human"}
           >
             {this.turn.gameState == states.INITIAL_ASSIGN ||
