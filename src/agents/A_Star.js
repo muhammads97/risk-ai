@@ -3,11 +3,9 @@ import AbstractAgent from './AbstractAgent';
 import heuristic from "./heuristic";
 import EgyptMap from "./maps/EgyptMap";
 import PriorityQueue from "priorityqueue";
-import {clone, cloneDeep} from "@babel/types";
+import cloneDeep from "lodash.clonedeep";
 
 var HashSet = require('hashset');
-
-
 
 
 /*
@@ -42,9 +40,11 @@ export default class Aggressive extends AbstractAgent {
     A_star(freeArmies, state) {
         var pq = PriorityQueue();
         var hashset = new HashSet();
-        pq.push(new ent(0, state, []));
-        let cur_st = pq.top.y;
-        let cur_dist = pq.top.x;
+        pq.push({f: 0, state: state, path: []});
+        let pqtop = cloneDeep(pq.top);
+        let cur_st = pqtop.state;
+        let cur_dist = pqtop.f;
+        let path = pqtop.path;
         pq.pop();
         hashset.add(cur_st);
         let ownT = cur_st.currentTerritories;
@@ -52,11 +52,8 @@ export default class Aggressive extends AbstractAgent {
             let adjs = ter.getAdjEnemy();
             for (let adjT in adjs) {
                 let f = new heuristic(ownT, ter, adjT); // ToDo get f = g + h  from salah. how??
-                let x = cloneDeep(cur_st);
+                let dcstate = cloneDeep(cur_st);
 
-                getAgent().setAttackingTerritory(ter);
-                st.getAgent().setAttackingTerritory(adjT);
-                st.getAgent().performAttack();
                 pq.push(new ent(f, st, null, null));
             }
         }
