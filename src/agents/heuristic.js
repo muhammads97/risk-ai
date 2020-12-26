@@ -11,8 +11,8 @@ export function g(state, prevState) {
     }
   });
   Object.keys(prevState.territories).forEach((k) => {
-    if ((state.territories[k].agent = state.agent)) {
-      prevArmy += state.territories[k].army;
+    if ((prevState.territories[k].agent = prevState.agent)) {
+      prevArmy += prevState.territories[k].army;
     }
   });
   return prevArmy - army;

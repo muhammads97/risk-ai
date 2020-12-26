@@ -103,6 +103,9 @@ export default class Astar extends AbstractAgent {
         var best_path = null;
         var best_val = Infinity;
         const comparator = (state1, state2) => {
+            // if(Math.abs(state1.f < state2.f)  <= 3){
+            //     return state1.path.length > state2.path.length;
+            // }
             return (state1.f < state2.f ? 1 : state1.f > state2.f ? -1 : 0);
         };
         var pq = new PriorityQueue({ comparator });
@@ -131,7 +134,7 @@ export default class Astar extends AbstractAgent {
 
         while (!pq.isEmpty()) {
             let pqtop = clonedeep(pq.top());
-            console.log(pqtop)
+            // console.log(pqtop)
             cur_f = pqtop.f;
             cur_h = pqtop.h;
             cur_g = pqtop.g;
