@@ -23,10 +23,12 @@ export default class Aggressive extends AbstractAgent {
 
     //assign all the free army
     //return true
-    assignArmy(territory, state) {
-        this.best_path = A_star(this.freeArmies, state);
-        let maxTerr = this.currentTerritories[best_path[0]];
-        maxTerr.addArmy(this.freeArmies);
+    // kind === true if A_star.
+    // kind === false if A_star_real_time.
+    assignArmy(territory, state, kind) {
+        this.best_path = this.A_star(this.freeArmies, state, kind);
+        let att = this.currentTerritories[this.best_path[0]];
+        att.addArmy(this.freeArmies);
         this.freeArmies = 0;
         return true;
     }
@@ -37,12 +39,12 @@ export default class Aggressive extends AbstractAgent {
         // else path not finished => this.state = Victim 5lst el attack el adem (continue attacking), 
         //best path
 
-        let att = state.territories[this.best_path[this.index++]];
-        if (this.index >= this.best_path.length || att == null || att.getArmy() == 1 || att.getAdjEnemy().length === 0) {
+        let att = state.territories[this.best_path[this.index++]];   // ToDo Check validation of this.
+        if (this.index >= this.best_path.length || att == null || att.getArmy() === 1 || att.getAdjEnemy().length === 0) {
             this.gameState = states.ASSIGN_ARMY;
             return true;
         }
-        let def = state.territories[this.best_path[this.index++]];
+        let def = state.territories[this.best_path[this.index++]];  // ToDo Check validation of this.
         this.attackingTerritory = att;
         this.defendingTerritory = def;
         this.performAttack();
@@ -52,26 +54,26 @@ export default class Aggressive extends AbstractAgent {
     }
 
 
-    A_star(freeArmies, state) {
+    A_star(freeArmies, state, kind) {
 
         // helper methods.
         function boolAttack(nextState, attacking, defending) {
-            const attarmy = state.territories[attacking]["army"]
-            const defarmy = state.territories[defending]["army"]
+            const attarmy = state.territories[attacking]["army"];
+            const defarmy = state.territories[defending]["army"];
             //case draw
             return (attarmy >= defarmy);
         }
 
         //attacking :string ,  defending: string
         function simulateAttack(nextState, attacking, defending) {
-            const attarmy = state.territories[attacking]["army"]
-            const defarmy = state.territories[defending]["army"]
+            const attarmy = state.territories[attacking]["army"];
+            const defarmy = state.territories[defending]["army"];
             //case draw
-            if (attarmy == defarmy) {
+            if (attarmy === defarmy) {
                 state.territories[attacking]["army"] = 1;
                 state.territories[defending]["army"] = 1;
             } else if (attarmy > defarmy) {
-                state.territories[defending]["agent"] = state.territories[attacking]["agent"]
+                state.territories[defending]["agent"] = state.territories[attacking]["agent"];
                 state.territories[defending]["army"] = state.territories[attacking]["army"] - state.territories[defending]["army"] - 1;
                 state.territories[attacking]["army"] = 1;
             } else {
@@ -149,7 +151,8 @@ export default class Aggressive extends AbstractAgent {
                             copypath.push(att);
                             copypath.push(def);
                             nextState = simulateAttack(nextState, att, def)
-                            let newg = cur_g + g(nextState, cur_st);
+                            let newg = g(nextState, cur_st);
+                            if (kind) newg += cur_g;
                             let newh = h(nextState);
                             if (!hashset.contains(nextState)) {
                                 pq.push({f: (newh + newg), h: newh, g: newg, state: nextState, path: copypath});
