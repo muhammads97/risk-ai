@@ -79,15 +79,18 @@ export default class EgyptMap extends React.Component {
   endTurn() {
     //console.log("from end turn")
     this.turn.gameState = states.ASSIGN_ARMY;
-    this.turn = this.turn.id === 1 ? this.agent2 : this.agent1;
+    let newTurn = this.turn.id === 1 ? this.agent2 : this.agent1;
+    if(newTurn.getTerritoryCount() === 0){
+      gameEnded = true;
+    }else{
+      this.turn = newTurn;
     this.turn.calculateBonusArmy();
     this.turn.setDefendingTerritory(null);
     this.turn.setAttackingTerritory(null);
     bgColor = this.turn.id === 1 ? "yellow" : "blue";
-    //game ended ?
-    if(this.turn.getTerritoryCount() === 0){
-      gameEnded = true;
     }
+    
+    
   }
 
   //TODO make the agents in the attack mode till they
@@ -191,7 +194,7 @@ export default class EgyptMap extends React.Component {
             this.turn.getId() +
             " " +
             (
-              gameEnded ? "Lost , Game Ended"
+              gameEnded ? "Won the Game!! , Game Ended"
               :
               this.turn.gameState === states.INITIAL_ASSIGN
               ? `Assigning army to territory, remaining: ${this.turn.freeArmies}`
