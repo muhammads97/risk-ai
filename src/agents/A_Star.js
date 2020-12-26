@@ -83,6 +83,7 @@ export default class Aggressive extends AbstractAgent {
         hashset.add(cur_st);
         let allTers = cur_st.territories;
         for (let att in allTers) {
+            //run A* here and start with each attacking terr as root
             if (allTers[att]["agent"] === this.getId())
                 for (let def in allTers) {
                     if (allTers[def]["agent"] !== this.getId()) {
