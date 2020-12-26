@@ -25,37 +25,26 @@ const states = {
 };
 
 export default class Aggressive extends AbstractAgent {
-
+    constructor(id, name) {
+        super(id,name);
+        this.best_path = null;
+        this.index = 0;
+    }
     //assign all the free army
     //return true
     assignArmy(territory) {
-        let best_pair = A_star(this.freeArmies);
+        this.best_path = A_star(this.freeArmies);
+        let maxTerr = this.currentTerritories[best_path[0]];
+        maxTerr.addArmy(this.freeArmies);
+        this.freeArmies = 0;
+        return true;
     }
 
     attack(territory) {
-
-    }
-    performAttack() {
-        const attarmy = this.attackingTerritory.getArmy();
-        const defarmy = this.defendingTerritory.getArmy();
-        //case draw
-        if (attarmy == defarmy) {
-            this.attackingTerritory.removeArmy(attarmy - 1);
-            this.defendingTerritory.removeArmy(defarmy - 1);
-        } else if (attarmy > defarmy) {
-            this.defendingTerritory
-                .getAgent()
-                .removeTerritory(this.defendingTerritory);
-            this.currentTerritories[
-                this.defendingTerritory.name
-            ] = this.defendingTerritory;
-            this.defendingTerritory.setAgent(this);
-            this.defendingTerritory.removeArmy(defarmy - (attarmy - defarmy));
-            this.attackingTerritory.removeArmy(attarmy - 1);
-        } else {
-            this.attackingTerritory.removeArmy(attarmy - 1);
-            this.defendingTerritory.removeArmy(attarmy - 1);
-        }
+        // attack , defending territories
+        // if path finished => this.state = assgin army, 
+        // else path not finished => this.state = Victim 5lst el attack el adem (continue attacking), 
+        //best path
     }
     //attacking :string ,  defending: string
     simulateAttack(state, attacking, defending) {
@@ -77,6 +66,7 @@ export default class Aggressive extends AbstractAgent {
     }
     A_star(freeArmies, state) {
         var best_path = null;
+        var best_val = Infinity;
         const comparator = (state1, state2)=>{
             let f1 = state1.h + state1.g;
             let f2 = state2.h + state2.g;
@@ -89,7 +79,7 @@ export default class Aggressive extends AbstractAgent {
         var cur_st = pqtop.state;
         var cur_g = pqtop.g;
         var path = pqtop.path;
-        pq.pop();
+        // pq.pop();
         hashset.add(cur_st);
         let allTers = cur_st.territories;
         for (let att in allTers) {
@@ -124,6 +114,7 @@ export default class Aggressive extends AbstractAgent {
             if(allAquired(cur_st.territories)){
                 return path;
             }
+            let deadState = true;
             for (let att in allTers) {
                 if (allTers[att]["agent"] === this.getId())
                     for (let def in allTers) {
@@ -134,13 +125,19 @@ export default class Aggressive extends AbstractAgent {
                             nextState = simulateAttack(nextState, att, def)
                             let newg = cur_g + g(nextState, cur_st);
                             let newh = h(nextState);
-                            if (!hashset.contains(nextState))
+                            if (!hashset.contains(nextState)){
                                 pq.push({ h: newh, g: newg, state: nextState, path: copypath });
+                                deadState =false;
+                            }
                         }
                     }
             }
+            if(deadState && cur_entry.g + cur_entry.h < best_val){
+                best_path = path;
+                best_val = cur_entry.g + cur_entry.h;
+            }
         }
-        
+        return best_path;
     }
 
 }
