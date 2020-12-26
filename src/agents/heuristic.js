@@ -74,13 +74,13 @@ export function h(state) {
   enimy_army /= total_army;
 
   //weights
-  terr_owned *= 0.001;
-  terr_left *= 1000;
-  enimy_army *= 10;
-  armyOwned *= 0.1;
-  protectedTerr *= 0.01;
-  unreachableEnimy *= 100;
-  longestAttackAvailable *= 0.01;
+  terr_owned *= 100;
+  terr_left *= 100;
+  enimy_army *= 1;
+  armyOwned *= 1;
+  protectedTerr *= 10;
+  unreachableEnimy *= 10;
+  longestAttackAvailable *= 5;
 
   return (
     (terr_left + enimy_army + unreachableEnimy) /

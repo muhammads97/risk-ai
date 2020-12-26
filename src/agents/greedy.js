@@ -13,6 +13,7 @@ const states = {
 export default class Aggressive extends AbstractAgent {
     //assume i have the state currentState
     assignArmy(currentState) {
+        this.l ++;
         let minH = h(currentState);
         //console.log("base h " ,minH)
         let assignName = null;
@@ -28,6 +29,7 @@ export default class Aggressive extends AbstractAgent {
                 if (enemyAdj.length !== 0) {
                     //for each adj enemy of this (own) terr
                     enemyAdj.forEach(enemy => {
+                        this.t++;
                         let nextState = this.mimicAttack(key, enemy, currentState);
                         let newh = h(nextState);
                         /*console.log("==================")
@@ -81,6 +83,7 @@ export default class Aggressive extends AbstractAgent {
                 if (enemyAdj.length !== 0) {
                     //for each adj enemy of this (own) terr
                     enemyAdj.forEach(enemy => {
+                        this.t++;
                         let nextState = this.mimicAttack(key, enemy, currentState);
                         let newh = h(nextState);
                         if (newh <= minH) {

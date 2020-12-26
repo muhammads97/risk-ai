@@ -103,6 +103,7 @@ export default class EgyptMap extends React.Component {
     let newTurn = this.turn.id === 1 ? this.agent2 : this.agent1;
     if(newTurn.getTerritoryCount() === 0){
       gameEnded = true;
+      this.eval();
       this.turn.setDefendingTerritory(null);
       this.turn.setAttackingTerritory(null);
     }else{
@@ -114,6 +115,19 @@ export default class EgyptMap extends React.Component {
     }
     
     
+  }
+
+  eval(){
+    console.log("evaluation for the " , this.turn.name , "agent");
+      console.log("L = " ,this.turn.l);
+      console.log("T = " ,this.turn.t);
+      console.log("P = F*L +T" );
+      console.log("for F = 1 " );
+      console.log("P = " ,(this.turn.l+this.turn.t));
+      console.log("for F = 100 " );
+      console.log("P = " ,(this.turn.l*100+this.turn.t));
+      console.log("for F = 10000 " );
+      console.log("P = " ,(this.turn.l*10000+this.turn.t));
   }
 
   //TODO make the agents in the attack mode till they
