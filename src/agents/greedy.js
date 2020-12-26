@@ -93,7 +93,7 @@ export default class Aggressive extends AbstractAgent {
         console.log(attackName);
         this.attackingTerritory = this.currentTerritories[attackName];
         console.log(this.attackingTerritory);
-        this.defendingTerritory = this.getEnemyTerritories()[defendName];
+            this.defendingTerritory = this.getEnemyTerritories()[defendName];
         this.performAttack()
         this.gameState = states.VICTIM;
         }
