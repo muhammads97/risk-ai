@@ -73,6 +73,8 @@
     border-radius: 1000px;
     height: 20px;
     width: 20px;
+    color: black;
+    font-weight: bold;
     background-color: turquoise;
     border-width: 0;
     aspect-ratio: 1;

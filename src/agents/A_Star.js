@@ -1,9 +1,7 @@
-import React from 'react'
 import AbstractAgent from './AbstractAgent';
-import {g, h} from "./heuristic";
-import EgyptMap from "./maps/EgyptMap";
+import { g, h } from "./heuristic";
 import PriorityQueue from "priorityqueue";
-import cloneDeep from "lodash.clonedeep";
+import clonedeep from "lodash.clonedeep";
 import HashSet from 'hashset'
 
 
@@ -14,39 +12,45 @@ const states = {
     ASSIGN_ARMY: "assignArmy",
 };
 
-export default class Aggressive extends AbstractAgent {
-    constructor(id, name) {
+export default class Astar extends AbstractAgent {
+    /**
+     * 
+     * @param {unique number of the agent} id 
+     * @param {name of the agent} name 
+     * @param {type of Astar agent whether it is a realtime or not} type 
+     */
+    constructor(id, name, type) {
         super(id, name);
         this.best_path = null;
         this.index = 0;
+        this.type = type;
     }
 
     //assign all the free army
     //return true
     // kind === true if A_star.
     // kind === false if A_star_real_time.
-    assignArmy(territory, state, kind) {
-        this.best_path = this.A_star(this.freeArmies, state, kind);
+    assignArmy(state) {
+        this.best_path = this.A_star(this.freeArmies, state);
         let att = this.currentTerritories[this.best_path[0]];
         att.addArmy(this.freeArmies);
         this.freeArmies = 0;
         return true;
     }
 
-    attack(territory, state) {
+    attack(state) {
         // attack , defending territories
         // if path finished => this.state = assgin army, 
         // else path not finished => this.state = Victim 5lst el attack el adem (continue attacking), 
         //best path
-
         let att = state.territories[this.best_path[this.index++]];   // ToDo Check validation of this.
-        if (this.index >= this.best_path.length || att == null || att.getArmy() === 1 || att.getAdjEnemy().length === 0) {
+        if (this.index >= this.best_path.length) {
             this.gameState = states.ASSIGN_ARMY;
             return true;
         }
         let def = state.territories[this.best_path[this.index++]];  // ToDo Check validation of this.
-        this.attackingTerritory = att;
-        this.defendingTerritory = def;
+        this.attackingTerritory = this.currentTerritories[att];
+        this.defendingTerritory = this.currentTerritories[att].getAdjEnemy().find((enemy) => enemy.name === def);
         this.performAttack();
         this.gameState = states.VICTIM;
         return true;
@@ -54,66 +58,35 @@ export default class Aggressive extends AbstractAgent {
     }
 
 
-    A_star(freeArmies, state, kind) {
+    A_star(freeArmies, state) {
 
         // helper methods.
-        function boolAttack(nextState, attacking, defending) {
-            const attarmy = state.territories[attacking]["army"];
-            const defarmy = state.territories[defending]["army"];
-            //case draw
+        const boolAttack = (currentState, attacking, defending) => {
+            const attarmy = currentState.territories[attacking]["army"];
+            const defarmy = currentState.territories[defending]["army"];
             return (attarmy >= defarmy);
         }
 
         //attacking :string ,  defending: string
-        function simulateAttack(nextState, attacking, defending) {
-            const attarmy = state.territories[attacking]["army"];
-            const defarmy = state.territories[defending]["army"];
+        const simulateAttack = (currentState, attacking, defending) => {
+            const attarmy = currentState.territories[attacking]["army"];
+            const defarmy = currentState.territories[defending]["army"];
             //case draw
             if (attarmy === defarmy) {
-                state.territories[attacking]["army"] = 1;
-                state.territories[defending]["army"] = 1;
+                currentState.territories[attacking]["army"] = 1;
+                currentState.territories[defending]["army"] = 1;
             } else if (attarmy > defarmy) {
-                state.territories[defending]["agent"] = state.territories[attacking]["agent"];
-                state.territories[defending]["army"] = state.territories[attacking]["army"] - state.territories[defending]["army"] - 1;
-                state.territories[attacking]["army"] = 1;
+                currentState.territories[defending]["agent"] = currentState.territories[attacking]["agent"];
+                currentState.territories[defending]["army"] = currentState.territories[attacking]["army"] - currentState.territories[defending]["army"] - 1;
+                currentState.territories[attacking]["army"] = 1;
             } else {
-                state.territories[defending]["army"] -= (state.territories[attacking]["army"] - 1);
-                state.territories[attacking]["army"] = 1;
+                currentState.territories[defending]["army"] -= (currentState.territories[attacking]["army"] - 1);
+                currentState.territories[attacking]["army"] = 1;
             }
-            return state;
-        }
-
-
-        var best_path = null;
-        var best_val = Infinity;
-        const comparator = (state1, state2) => {
-            let f1 = state1.h + state1.g;
-            let f2 = state2.h + state2.g;
-            return (f1 < f2 ? 1 : f1 > f2 ? -1 : 0);
-        };
-        var pq = PriorityQueue({comparator});
-        var hashset = new HashSet();
-        pq.push({f: 0, h: 0, g: 0, state: state, path: []});
-        var pqtop = cloneDeep(pq.top);
-        var cur_f = pqtop.f;
-        var cur_h = pqtop.h;
-        var cur_g = pqtop.g;
-        var cur_st = pqtop.state;
-        var path = pqtop.path;
-        pq.pop();
-        hashset.add(cur_st);
-        let allTers = cur_st.territories;
-        for (let att in allTers) {
-            //run A* here and start with each attacking terr as root
-            if (allTers[att]["agent"] === this.getId()) {
-                let nextState = cloneDeep(cur_st);
-                let nextpath = cloneDeep(path);
-                nextState.territories[att]["agent"] += freeArmies;
-                pq.push({h: 0, g: 0, state: nextState, path: nextpath});
-            }
+            return currentState;
         }
         const allAquired = (territories) => {
-            for (let att in allTers) {
+            for (let att in territories) {
                 if (allTers[att]["agent"] !== this.getId())
                     return false;
             }
@@ -121,8 +94,37 @@ export default class Aggressive extends AbstractAgent {
         };
 
 
+        var best_path = null;
+        var best_val = Infinity;
+        const comparator = (state1, state2) => {
+            return (state1.f < state2.f ? 1 : state1.f > state2.f ? -1 : 0);
+        };
+        var pq = new PriorityQueue({ comparator });
+        var hashset = new HashSet();
+
+        var initialState = { f: 0, h: 0, g: 0, state: state, path: [] };
+
+        var initialStateCopy = clonedeep(initialState);
+        var cur_f = initialStateCopy.f;
+        var cur_h = initialStateCopy.h;
+        var cur_g = initialStateCopy.g;
+        var cur_st = initialStateCopy.state;
+        var path = initialStateCopy.path;
+        let allTers = cur_st.territories;
+        for (let att in allTers) {
+            //run A* here and start with each attacking terr as root
+            if (allTers[att]["agent"] === this.getId()) {
+                let nextState = clonedeep(cur_st);
+                let nextpath = clonedeep(path);
+                nextState.territories[att]["army"] += freeArmies;
+                pq.push({ f: 0, h: 0, g: 0, state: nextState, path: nextpath });
+            }
+        }
+
+
         while (!pq.empty) {
-            pqtop = cloneDeep(pq.top);
+            let pqtop = clonedeep(pq.top());
+            console.log(pqtop)
             cur_f = pqtop.f;
             cur_h = pqtop.h;
             cur_g = pqtop.g;
@@ -135,39 +137,42 @@ export default class Aggressive extends AbstractAgent {
             }
             let deadState = true;
             allTers = cur_st.territories;
-            for (let att in allTers) {
-                if (allTers[att]["agent"] === this.getId()) {
-                    for (let def in allTers) {
+            for (let att in allTers) 
+                if (allTers[att]["agent"] === this.getId() && allTers[att]["army"] > 1) {
+                    allTers[att]["adj"].forEach(def => {
                         if (allTers[def]["agent"] !== this.getId()) {
-                            let nextState = cloneDeep(cur_st);
-                            let copypath = cloneDeep(path);
+                            let nextState = clonedeep(cur_st);
+                            let copypath = clonedeep(path);
                             if (!boolAttack(nextState, att, def)) {
                                 if (cur_f < best_val) {
                                     best_path = path;
                                     best_val = cur_f;
                                 }
-                                continue;
+                                return;
                             }
                             copypath.push(att);
                             copypath.push(def);
                             nextState = simulateAttack(nextState, att, def)
                             let newg = g(nextState, cur_st);
-                            if (kind) newg += cur_g;
+                            if (this.kind)
+                                newg += cur_g;
                             let newh = h(nextState);
                             if (!hashset.contains(nextState)) {
-                                pq.push({f: (newh + newg), h: newh, g: newg, state: nextState, path: copypath});
+                                // console.log({ f: (newh + newg), h: newh, g: newg, state: nextState, path: copypath });
+                                pq.push({ f: (newh + newg), h: newh, g: newg, state: nextState, path: copypath });
                                 deadState = false;
                             }
                         }
-                    }
+                    });
                 }
 
-            }
+            
             if (deadState && cur_f < best_val) {
                 best_path = path;
                 best_val = cur_f;
             }
         }
+        console.log("dead state")
         return best_path;
     }
 

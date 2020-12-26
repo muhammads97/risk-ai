@@ -8,6 +8,7 @@ import Aggressive from "./agents/aggressive";
 import pacifist from "./agents/pacifist";
 import Minimax from "./agents/MiniMax";
 import greedy from "./agents/greedy";
+import Astar from "./agents/A_Star";
 
 function App() {
   const Maps = {
@@ -89,8 +90,21 @@ function App() {
             >
               greedy
               </button>
-            <button className="agentButton"> A* search</button>
-            <button className="agentButton"> real-time A*</button>
+            <button 
+            className="agentButton"
+            onClick={() =>
+              agent === 0
+                ? setAgent1(new Astar(1, "Astar",true))
+                : setAgent2(new Astar(2, "Astar",true))
+            }
+            > A* search</button>
+            <button className="agentButton"
+             onClick={() =>
+               agent === 0
+                 ? setAgent1(new Astar(1, "Astar-realtime",false))
+                 : setAgent2(new Astar(2, "Astar-realtime",false))
+             }
+             > real-time A*</button>
             <button
               className="agentButton"
               onClick={() =>
