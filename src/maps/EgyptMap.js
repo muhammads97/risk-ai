@@ -41,7 +41,8 @@ export default class EgyptMap extends React.Component {
   }
 
   componentWillMount() {
-    this.distributeTerritories();
+    //this.distributeTerritories();
+    this.fixedDistributeTerritories();
   }
 
   distributeTerritories() {
@@ -62,6 +63,26 @@ export default class EgyptMap extends React.Component {
         this.agent1.addTerritory(allTerritories[i]);
       }
       allTerritories[i].addArmy(1);
+    }
+    this.agent1.setFreeArmies(initialArmy - this.agent1.getTerritoryCount());
+    this.agent2.setFreeArmies(initialArmy - this.agent2.getTerritoryCount());
+    this.turn = this.agent1;
+    this.setState({
+      dummy: this.state.dummy + 1,
+    });
+  }
+
+  fixedDistributeTerritories() {
+    
+    for (let i = 0; i < this.territories.length; i++) {
+      if (i < 13) {
+        this.territories[i].setAgent(this.agent2);
+        this.agent2.addTerritory(this.territories[i]);
+      } else {
+        this.territories[i].setAgent(this.agent1);
+        this.agent1.addTerritory(this.territories[i]);
+      }
+      this.territories[i].addArmy(1);
     }
     this.agent1.setFreeArmies(initialArmy - this.agent1.getTerritoryCount());
     this.agent2.setFreeArmies(initialArmy - this.agent2.getTerritoryCount());

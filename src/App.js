@@ -3,7 +3,7 @@ import * as React from "react";
 import EgyptMap from "./maps/EgyptMap";
 import USMap from "./maps/USMap";
 import HumanAgent from "./agents/HumanAgent";
-import Passive from "./agents/Passive";
+import Passive from "./agents/passive_eval";
 import Aggressive from "./agents/aggressive";
 import pacifist from "./agents/pacifist";
 import Minimax from "./agents/MiniMax";
