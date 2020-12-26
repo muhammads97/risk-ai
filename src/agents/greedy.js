@@ -13,13 +13,14 @@ export default class Aggressive extends AbstractAgent {
     //assume i have the state currentState
     assignArmy(currentState) {
         let minH = h(currentState);
+        //console.log("base h " ,minH)
         let assignName = null ;
         let keys = Object.keys(currentState.territories);
         keys.forEach(key =>{
             let terr = currentState.territories[key];
             terr["army"] += this.freeArmies;
             //for each own terr that u can attack from 
-            if(terr["agent"] && terr["army"] !== 1){ 
+            if(terr["agent"] === this.getId() && terr["army"] !== 1){ 
                 let enemyAdj = 
                 terr["adj"].filter((t) => currentState.territories[t]["agent"] !== this.getId());
                 //only if u can attack
@@ -28,6 +29,10 @@ export default class Aggressive extends AbstractAgent {
                     enemyAdj.forEach(enemy =>{ 
                         let nextState = this.mimicAttack(key,enemy,currentState);
                         let newh = h(nextState);
+                        /*console.log("==================")
+                        console.log("attacking " ,key)
+                        console.log("defending " ,enemy)
+                        console.log("h " ,newh)*/
                         if(newh <= minH){
                             assignName = key;
                             minH = newh;
@@ -90,9 +95,9 @@ export default class Aggressive extends AbstractAgent {
         if(attackName === null){
             this.gameState = states.ASSIGN_ARMY;
         }else{
-        console.log(attackName);
+        //console.log(attackName);
         this.attackingTerritory = this.currentTerritories[attackName];
-        console.log(this.attackingTerritory);
+        //console.log(this.attackingTerritory);
         this.defendingTerritory = this.getEnemyTerritories()[defendName];
         this.performAttack()
         this.gameState = states.VICTIM;

@@ -1,7 +1,7 @@
 import * as React from "react";
 import "../App.css";
 import EgyptTerritories from "../helper/EgyptTerritories";
-import { h } from "../agents/heuristic";
+//import { h } from "../agents/heuristic";
 
 const states = {
   INITIAL_ASSIGN: "initialAssign",
@@ -12,7 +12,7 @@ const states = {
 
 const initialArmy = 20;
 var gameEnded = false;
-var bgColor = null;
+var bgColor = "yellow";
 export default class EgyptMap extends React.Component {
   constructor(props) {
     super(props);
@@ -82,6 +82,8 @@ export default class EgyptMap extends React.Component {
     let newTurn = this.turn.id === 1 ? this.agent2 : this.agent1;
     if(newTurn.getTerritoryCount() === 0){
       gameEnded = true;
+      this.turn.setDefendingTerritory(null);
+      this.turn.setAttackingTerritory(null);
     }else{
       this.turn = newTurn;
     this.turn.calculateBonusArmy();
