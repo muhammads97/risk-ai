@@ -93,7 +93,7 @@ export default class Astar extends AbstractAgent {
         }
         const allAquired = (territories) => {
             for (let att in territories) {
-                if (allTers[att]["agent"] !== this.getId())
+                if (territories[att]["agent"] !== this.getId())
                     return false;
             }
             return true;
@@ -127,15 +127,15 @@ export default class Astar extends AbstractAgent {
                 let nextState = clonedeep(cur_st);
                 let nextpath = clonedeep(path);
                 nextpath.push(att);
+                // console.log(nextpath);
                 nextState.territories[att]["army"] += freeArmies;
                 pq.push({f: Infinity, h: Infinity, g: 0, state: nextState, path: nextpath});
             }
         }
 
-
         while (!pq.isEmpty()) {
             let pqtop = clonedeep(pq.top());
-            // console.log(pqtop)
+            console.log(pqtop)
             cur_f = pqtop.f;
             cur_h = pqtop.h;
             cur_g = pqtop.g;
@@ -145,6 +145,8 @@ export default class Astar extends AbstractAgent {
             this.t++;
             hashset.add(cur_st);
             if (allAquired(cur_st.territories)) {
+                console.log("win", path);
+
                 return path;
             }
             let deadState = true;
@@ -187,7 +189,8 @@ export default class Astar extends AbstractAgent {
             }
         }
 
-        // console.log("dead state",best_path)
+        console.log("dead state",best_path)
+        //console.log(best_path);
         return best_path;
     }
 
