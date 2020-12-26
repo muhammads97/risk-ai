@@ -1,5 +1,6 @@
 import AbstractAgent from './AbstractAgent';
 import {h} from './heuristic';
+
 const clonedeep = require('lodash.clonedeep')
 
 const states = {
@@ -13,22 +14,27 @@ export default class Aggressive extends AbstractAgent {
     //assume i have the state currentState
     assignArmy(currentState) {
         let minH = h(currentState);
-        let assignName = null ;
+        //console.log("base h " ,minH)
+        let assignName = null;
         let keys = Object.keys(currentState.territories);
-        keys.forEach(key =>{
+        keys.forEach(key => {
             let terr = currentState.territories[key];
             terr["army"] += this.freeArmies;
             //for each own terr that u can attack from 
-            if(terr["agent"] && terr["army"] !== 1){ 
-                let enemyAdj = 
-                terr["adj"].filter((t) => currentState.territories[t]["agent"] !== this.getId());
+            if (terr["agent"] === this.getId() && terr["army"] !== 1) {
+                let enemyAdj =
+                    terr["adj"].filter((t) => currentState.territories[t]["agent"] !== this.getId());
                 //only if u can attack
-                if(enemyAdj.length !== 0 ){
+                if (enemyAdj.length !== 0) {
                     //for each adj enemy of this (own) terr
-                    enemyAdj.forEach(enemy =>{ 
-                        let nextState = this.mimicAttack(key,enemy,currentState);
+                    enemyAdj.forEach(enemy => {
+                        let nextState = this.mimicAttack(key, enemy, currentState);
                         let newh = h(nextState);
-                        if(newh <= minH){
+                        /*console.log("==================")
+                        console.log("attacking " ,key)
+                        console.log("defending " ,enemy)
+                        console.log("h " ,newh)*/
+                        if (newh <= minH) {
                             assignName = key;
                             minH = newh;
                         }
@@ -37,47 +43,47 @@ export default class Aggressive extends AbstractAgent {
             }
             terr["army"] -= this.freeArmies;
         })
-        if(assignName === null){
+        if (assignName === null) {
             //no attack is better so we assign 1 to many random terrs
-            let j =0;
-            for(let i=0;i<this.freeArmies;i++){
+            let j = 0;
+            for (let i = 0; i < this.freeArmies; i++) {
                 let name = keys[j % (keys.length)];
                 let assign = this.currentTerritories[name];
-                if(assign.getAdjEnemy().length !== 0){
+                if (assign.getAdjEnemy().length !== 0) {
                     assign.addArmy(1);
-                }else{
+                } else {
                     i--;
                 }
                 j++;
             }
-        }else{
+        } else {
             let assign = this.currentTerritories[assignName];
             assign.addArmy(this.freeArmies);
-        }    
-        
+        }
+
         this.freeArmies = 0;
         return true;
     }
 
     attack(currentState) {
         let minH = h(currentState);
-        let attackName = null ;
+        let attackName = null;
         let defendName = null;
         let keys = Object.keys(currentState.territories);
-        keys.forEach(key =>{
+        keys.forEach(key => {
             let terr = currentState.territories[key];
             //terr["army"] += this.freeArmies;
             //for each own terr that u can attack from 
-            if(terr["agent"] === this.getId() && terr["army"] !== 1){ 
-                let enemyAdj = 
-                terr["adj"].filter((t) => currentState.territories[t]["agent"] !== this.getId());
+            if (terr["agent"] === this.getId() && terr["army"] !== 1) {
+                let enemyAdj =
+                    terr["adj"].filter((t) => currentState.territories[t]["agent"] !== this.getId());
                 //only if u can attack
-                if(enemyAdj.length !== 0 ){
+                if (enemyAdj.length !== 0) {
                     //for each adj enemy of this (own) terr
-                    enemyAdj.forEach(enemy =>{ 
-                        let nextState = this.mimicAttack(key,enemy,currentState);
+                    enemyAdj.forEach(enemy => {
+                        let nextState = this.mimicAttack(key, enemy, currentState);
                         let newh = h(nextState);
-                        if(newh <= minH){
+                        if (newh <= minH) {
                             attackName = key;
                             defendName = enemy;
                             minH = newh;
@@ -87,20 +93,21 @@ export default class Aggressive extends AbstractAgent {
             }
             //terr["army"] -= this.freeArmies;
         })
-        if(attackName === null){
+        if (attackName === null) {
             this.gameState = states.ASSIGN_ARMY;
-        }else{
-        console.log(attackName);
-        this.attackingTerritory = this.currentTerritories[attackName];
-        console.log(this.attackingTerritory);
+        } else {
+            //console.log(attackName);
+            this.attackingTerritory = this.currentTerritories[attackName];
+
+            //console.log(this.attackingTerritory);
             this.defendingTerritory = this.getEnemyTerritories()[defendName];
-        this.performAttack()
-        this.gameState = states.VICTIM;
+            this.performAttack()
+            this.gameState = states.VICTIM;
         }
         return true;
     }
 
-    mimicAttack(attackingName , defendingName , state){
+    mimicAttack(attackingName, defendingName, state) {
         //deepclone the state
         let newState = clonedeep(state);
         let attacking = newState.territories[attackingName];
@@ -110,16 +117,16 @@ export default class Aggressive extends AbstractAgent {
         if (attarmy == defarmy) {
             attacking["army"] = 1;
             defending["army"] = 1;
-          } else if (attarmy > defarmy) {
+        } else if (attarmy > defarmy) {
             defending["agent"] = attacking["agent"];
-            defending["army"] = attarmy-defarmy;
+            defending["army"] = attarmy - defarmy;
             attacking["army"] = 1;
-          } else {
+        } else {
             attacking["army"] = 1;
-            defending["army"] -= (attarmy-1);
-          }
-          return newState;
+            defending["army"] -= (attarmy - 1);
+        }
+        return newState;
     }
 
-    
+
 }

@@ -34,23 +34,26 @@ export default class Astar extends AbstractAgent {
         this.best_path = this.A_star(this.freeArmies, state);
         let att = this.currentTerritories[this.best_path[0]];
         att.addArmy(this.freeArmies);
+        console.log("ASSIGN ARMY");
         this.freeArmies = 0;
+        this.index = 1;
         return true;
     }
 
     attack(state) {
+        console.log("ATTACK");
         // attack , defending territories
-        // if path finished => this.state = assgin army, 
-        // else path not finished => this.state = Victim 5lst el attack el adem (continue attacking), 
+        // if path finished => this.state = assgin army,
+        // else path not finished => this.state = Victim 5lst el attack el adem (continue attacking),
         //best path
-        let att = this.currentTerritories[this.best_path[this.index++]];   // ToDo Check validation of this.
+        let att = this.best_path[this.index++];   // ToDo Check validation of this.
         if (this.index >= this.best_path.length) {
             this.gameState = states.ASSIGN_ARMY;
             return true;
         }
-        let def = this.getEnemyTerritories()[this.best_path[this.index++]];  // ToDo Check validation of this.
-        this.attackingTerritory = att;
-        this.defendingTerritory = def;
+        let def = this.best_path[this.index++];  // ToDo Check validation of this.
+        this.attackingTerritory = this.currentTerritories[att];
+        this.defendingTerritory = this.currentTerritories[att].getAdjEnemy().find((enemy) => enemy.name === def);
         this.performAttack();
         this.gameState = states.VICTIM;
         return true;
@@ -65,7 +68,7 @@ export default class Astar extends AbstractAgent {
             const attarmy = currentState.territories[attacking]["army"];
             const defarmy = currentState.territories[defending]["army"];
             return (attarmy >= defarmy);
-        };
+        }
 
         //attacking :string ,  defending: string
         const simulateAttack = (currentState, attacking, defending) => {
@@ -73,18 +76,21 @@ export default class Astar extends AbstractAgent {
             const defarmy = currentState.territories[defending]["army"];
             //case draw
             if (attarmy === defarmy) {
+                // console.log("EQUAL TERR")
                 currentState.territories[attacking]["army"] = 1;
                 currentState.territories[defending]["army"] = 1;
             } else if (attarmy > defarmy) {
+                // console.log("GREATER TERR")
                 currentState.territories[defending]["agent"] = currentState.territories[attacking]["agent"];
                 currentState.territories[defending]["army"] = currentState.territories[attacking]["army"] - currentState.territories[defending]["army"] - 1;
                 currentState.territories[attacking]["army"] = 1;
             } else {
+                // console.log("SMALLER TERR")
                 currentState.territories[defending]["army"] -= (currentState.territories[attacking]["army"] - 1);
                 currentState.territories[attacking]["army"] = 1;
             }
             return currentState;
-        };
+        }
         const allAquired = (territories) => {
             for (let att in territories) {
                 if (allTers[att]["agent"] !== this.getId())
@@ -97,12 +103,15 @@ export default class Astar extends AbstractAgent {
         var best_path = null;
         var best_val = Infinity;
         const comparator = (state1, state2) => {
+            // if(Math.abs(state1.f < state2.f)  <= 3){
+            //     return state1.path.length > state2.path.length;
+            // }
             return (state1.f < state2.f ? 1 : state1.f > state2.f ? -1 : 0);
         };
         var pq = new PriorityQueue({comparator});
         var hashset = new HashSet();
 
-        var initialState = {f: 0, h: 0, g: 0, state: state, path: []};
+        var initialState = {f: Infinity, h: Infinity, g: 0, state: state, path: []};
 
         var initialStateCopy = clonedeep(initialState);
         var cur_f = initialStateCopy.f;
@@ -116,15 +125,16 @@ export default class Astar extends AbstractAgent {
             if (allTers[att]["agent"] === this.getId()) {
                 let nextState = clonedeep(cur_st);
                 let nextpath = clonedeep(path);
+                nextpath.push(att);
                 nextState.territories[att]["army"] += freeArmies;
-                pq.push({f: 0, h: 0, g: 0, state: nextState, path: nextpath});
+                pq.push({f: Infinity, h: Infinity, g: 0, state: nextState, path: nextpath});
             }
         }
 
 
-        while (!pq.empty) {
+        while (!pq.isEmpty()) {
             let pqtop = clonedeep(pq.top());
-            console.log(pqtop)
+            // console.log(pqtop)
             cur_f = pqtop.f;
             cur_h = pqtop.h;
             cur_g = pqtop.g;
@@ -141,6 +151,7 @@ export default class Astar extends AbstractAgent {
                 if (allTers[att]["agent"] === this.getId() && allTers[att]["army"] > 1) {
                     allTers[att]["adj"].forEach(def => {
                         if (allTers[def]["agent"] !== this.getId()) {
+
                             let nextState = clonedeep(cur_st);
                             let copypath = clonedeep(path);
                             if (!boolAttack(nextState, att, def)) {
@@ -153,10 +164,11 @@ export default class Astar extends AbstractAgent {
                             copypath.push(att);
                             copypath.push(def);
                             nextState = simulateAttack(nextState, att, def)
-                            let newg = g(nextState, cur_st);
+                            let newg = g(clonedeep(nextState), clonedeep(cur_st));
                             if (this.kind)
                                 newg += cur_g;
-                            let newh = h(nextState);
+                            let newh = h(clonedeep(nextState));
+
                             if (!hashset.contains(nextState)) {
                                 // console.log({ f: (newh + newg), h: newh, g: newg, state: nextState, path: copypath });
                                 pq.push({f: (newh + newg), h: newh, g: newg, state: nextState, path: copypath});
@@ -172,7 +184,8 @@ export default class Astar extends AbstractAgent {
                 best_val = cur_f;
             }
         }
-        console.log("dead state")
+
+        // console.log("dead state",best_path)
         return best_path;
     }
 

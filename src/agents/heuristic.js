@@ -11,8 +11,8 @@ export function g(state, prevState) {
     }
   });
   Object.keys(prevState.territories).forEach((k) => {
-    if ((state.territories[k].agent = state.agent)) {
-      prevArmy += state.territories[k].army;
+    if ((prevState.territories[k].agent = prevState.agent)) {
+      prevArmy += prevState.territories[k].army;
     }
   });
   return prevArmy - army;
@@ -92,7 +92,7 @@ function dfs(state, enimy, d) {
   visited[enimy] = 1;
   if (d + 1 > max_depth) max_depth = d + 1;
   state.territories[enimy].adj.forEach((a) => {
-    if (state.territories[a].agent == state.agent && visited[a] != 1) {
+    if (state.territories[a].agent !== state.agent && visited[a] != 1) {
       dfs(state, a, d + 1);
     }
   });
