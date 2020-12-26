@@ -12,6 +12,7 @@ const states = {
 
 const initialArmy = 20;
 var gameEnded = false;
+var bgColor = null;
 export default class EgyptMap extends React.Component {
   constructor(props) {
     super(props);
@@ -22,7 +23,7 @@ export default class EgyptMap extends React.Component {
     this.agent2 = props.agent2;
     this.turn = null;
     this.initialArmy = 20;
-
+    
     this.state = {
       attacker: null,
       victim: null,
@@ -82,6 +83,7 @@ export default class EgyptMap extends React.Component {
     this.turn.calculateBonusArmy();
     this.turn.setDefendingTerritory(null);
     this.turn.setAttackingTerritory(null);
+    bgColor = this.turn.id === 1 ? "yellow" : "blue";
     //game ended ?
     if(this.turn.getTerritoryCount() === 0){
       gameEnded = true;
@@ -179,7 +181,11 @@ export default class EgyptMap extends React.Component {
             {"End Turn"}
           </button>
         }
-        <h3 className="game-state">
+        <h3 className="game-state"
+        style={{
+          color:bgColor
+        }}
+        > 
           {this.turn.name +
             " " +
             this.turn.getId() +
