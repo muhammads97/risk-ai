@@ -11,7 +11,7 @@ const states = {
 };
 
 const initialArmy = 20;
-
+var gameEnded = false;
 export default class EgyptMap extends React.Component {
   constructor(props) {
     super(props);
@@ -82,6 +82,10 @@ export default class EgyptMap extends React.Component {
     this.turn.calculateBonusArmy();
     this.turn.setDefendingTerritory(null);
     this.turn.setAttackingTerritory(null);
+    //game ended ?
+    if(this.turn.getTerritoryCount() === 0){
+      gameEnded = true;
+    }
   }
 
   //TODO make the agents in the attack mode till they
@@ -137,7 +141,7 @@ export default class EgyptMap extends React.Component {
                   left: this.locations[t.name].x,
                   backgroundColor: bg_color,
                 }}
-                disabled={this.turn.name !== "Human"}
+                disabled={this.turn.name !== "Human" || gameEnded}
                 onClick={() => this.territorySelectHandler(t)}
               >
                 {t.army}
@@ -149,7 +153,7 @@ export default class EgyptMap extends React.Component {
           <button
             className="button advance"
             onClick={() => this.territorySelectHandler(this.getStateObject())}
-            disabled={this.turn.name === "Human"}
+            disabled={this.turn.name === "Human" || gameEnded}
           >
             {this.turn.gameState === states.INITIAL_ASSIGN ||
             this.turn.gameState === states.ASSIGN_ARMY
@@ -163,7 +167,7 @@ export default class EgyptMap extends React.Component {
             disabled={
               this.turn.name !== "Human" ||
               this.turn.gameState === states.INITIAL_ASSIGN ||
-              this.turn.gameState === states.ASSIGN_ARMY
+              this.turn.gameState === states.ASSIGN_ARMY || gameEnded
             }
             onClick={() => {
               this.endTurn();
@@ -180,7 +184,10 @@ export default class EgyptMap extends React.Component {
             " " +
             this.turn.getId() +
             " " +
-            (this.turn.gameState === states.INITIAL_ASSIGN
+            (
+              gameEnded ? "Lost , Game Ended"
+              :
+              this.turn.gameState === states.INITIAL_ASSIGN
               ? `Assigning army to territory, remaining: ${this.turn.freeArmies}`
               : this.turn.gameState === states.ASSIGN_ARMY
               ? `Assigning army to territory, remaining: ${this.turn.freeArmies}`

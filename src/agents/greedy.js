@@ -19,7 +19,7 @@ export default class Aggressive extends AbstractAgent {
             let terr = currentState.territories[key];
             terr["army"] += this.freeArmies;
             //for each own terr that u can attack from 
-            if(currentState.agent === this.getId() && terr["army"] !== 1){ 
+            if(terr["agent"] && terr["army"] !== 1){ 
                 let enemyAdj = 
                 terr["adj"].filter((t) => currentState.territories[t]["agent"] !== this.getId());
                 //only if u can attack
@@ -68,7 +68,7 @@ export default class Aggressive extends AbstractAgent {
             let terr = currentState.territories[key];
             //terr["army"] += this.freeArmies;
             //for each own terr that u can attack from 
-            if(currentState.agent === this.getId() && terr["army"] !== 1){ 
+            if(terr["agent"] === this.getId() && terr["army"] !== 1){ 
                 let enemyAdj = 
                 terr["adj"].filter((t) => currentState.territories[t]["agent"] !== this.getId());
                 //only if u can attack
@@ -90,7 +90,9 @@ export default class Aggressive extends AbstractAgent {
         if(attackName === null){
             this.gameState = states.ASSIGN_ARMY;
         }else{
+        console.log(attackName);
         this.attackingTerritory = this.currentTerritories[attackName];
+        console.log(this.attackingTerritory);
         this.defendingTerritory = this.getEnemyTerritories()[defendName];
         this.performAttack()
         this.gameState = states.VICTIM;
