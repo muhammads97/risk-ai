@@ -17,6 +17,8 @@ export default class AbstractAgent {
     this.defendingTerritory = null;
     this.gameState = states.INITIAL_ASSIGN;
     this.g = 0;
+    this.l = 0;
+    this.t = 0;
   }
 
   updateState(territory) {

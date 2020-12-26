@@ -31,6 +31,7 @@ export default class Astar extends AbstractAgent {
     // kind === true if A_star.
     // kind === false if A_star_real_time.
     assignArmy(state) {
+        this.l++;
         this.best_path = this.A_star(this.freeArmies, state);
         let att = this.currentTerritories[this.best_path[0]];
         att.addArmy(this.freeArmies);
@@ -57,7 +58,6 @@ export default class Astar extends AbstractAgent {
         this.performAttack();
         this.gameState = states.VICTIM;
         return true;
-
     }
 
 
@@ -120,6 +120,7 @@ export default class Astar extends AbstractAgent {
         var cur_st = initialStateCopy.state;
         var path = initialStateCopy.path;
         let allTers = cur_st.territories;
+        this.t++;
         for (let att in allTers) {
             //run A* here and start with each attacking terr as root
             if (allTers[att]["agent"] === this.getId()) {
@@ -141,6 +142,7 @@ export default class Astar extends AbstractAgent {
             cur_st = pqtop.state;
             path = pqtop.path;
             pq.pop();
+            this.t++;
             hashset.add(cur_st);
             if (allAquired(cur_st.territories)) {
                 return path;
