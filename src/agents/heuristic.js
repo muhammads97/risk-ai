@@ -92,7 +92,7 @@ function dfs(state, enimy, d) {
   visited[enimy] = 1;
   if (d + 1 > max_depth) max_depth = d + 1;
   state.territories[enimy].adj.forEach((a) => {
-    if (state.territories[a].agent == state.agent && visited[a] != 1) {
+    if (state.territories[a].agent !== state.agent && visited[a] != 1) {
       dfs(state, a, d + 1);
     }
   });
