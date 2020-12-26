@@ -7,6 +7,7 @@ import Passive from "./agents/Passive";
 import Aggressive from "./agents/aggressive";
 import pacifist from "./agents/pacifist";
 import Minimax from "./agents/MiniMax";
+import greedy from "./agents/greedy";
 
 function App() {
   const Maps = {
@@ -79,7 +80,15 @@ function App() {
             </button>
           </div>
           <div className="col">
-            <button className="agentButton">greedy</button>
+            <button className="agentButton"
+            onClick={() =>
+              agent === 0
+                ? setAgent1(new greedy(1, "greedy"))
+                : setAgent2(new greedy(2, "greedy"))
+            }
+            >
+              greedy
+              </button>
             <button className="agentButton"> A* search</button>
             <button className="agentButton"> real-time A*</button>
             <button
