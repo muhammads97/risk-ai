@@ -80,7 +80,7 @@ export function h(state) {
   armyOwned *= 1;
   protectedTerr *= 10;
   unreachableEnimy *= 10;
-  longestAttackAvailable *= 5;
+  longestAttackAvailable *= 10;
 
   return (
     (terr_left + enimy_army + unreachableEnimy) /
