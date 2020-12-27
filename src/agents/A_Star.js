@@ -67,7 +67,7 @@ export default class Astar extends AbstractAgent {
         const boolAttack = (currentState, attacking, defending) => {
             const attarmy = currentState.territories[attacking]["army"];
             const defarmy = currentState.territories[defending]["army"];
-            return (attarmy >= defarmy);
+            return (attarmy > defarmy);
         }
 
         //attacking :string ,  defending: string
@@ -93,7 +93,7 @@ export default class Astar extends AbstractAgent {
         }
         const allAquired = (territories) => {
             for (let att in territories) {
-                if (territories[att]["agent"] !== this.getId())
+                if (allTers[att]["agent"] !== this.getId())
                     return false;
             }
             return true;
@@ -102,6 +102,7 @@ export default class Astar extends AbstractAgent {
 
         var best_path = null;
         var best_val = Infinity;
+        var best_army = -Infinity;
         const comparator = (state1, state2) => {
             // if(Math.abs(state1.f < state2.f)  <= 3){
             //     return state1.path.length > state2.path.length;
@@ -132,10 +133,10 @@ export default class Astar extends AbstractAgent {
                 pq.push({f: Infinity, h: Infinity, g: 0, state: nextState, path: nextpath});
             }
         }
-
+        // var bl = pq.length === 26;
         while (!pq.isEmpty()) {
             let pqtop = clonedeep(pq.top());
-            console.log(pqtop)
+            // console.log(pqtop)
             cur_f = pqtop.f;
             cur_h = pqtop.h;
             cur_g = pqtop.g;
@@ -146,8 +147,7 @@ export default class Astar extends AbstractAgent {
             hashset.add(cur_st);
             if (allAquired(cur_st.territories)) {
                 console.log("win", path);
-
-                return path;
+                if (path.length > 1) return path;
             }
             let deadState = true;
             allTers = cur_st.territories;
@@ -156,12 +156,17 @@ export default class Astar extends AbstractAgent {
                     allTers[att]["adj"].forEach(def => {
                         if (allTers[def]["agent"] !== this.getId()) {
 
+                            // console.log(att, def);
+
                             let nextState = clonedeep(cur_st);
                             let copypath = clonedeep(path);
                             if (!boolAttack(nextState, att, def)) {
                                 if (cur_f < best_val) {
                                     best_path = path;
                                     best_val = cur_f;
+                                } else if (allTers[att]["army"] > best_army) {
+                                    best_army = allTers[att]["army"];
+                                    best_path = path;
                                 }
                                 return;
                             }
@@ -189,7 +194,7 @@ export default class Astar extends AbstractAgent {
             }
         }
 
-        console.log("dead state",best_path)
+        console.log("dead state", best_path)
         //console.log(best_path);
         return best_path;
     }
