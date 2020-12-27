@@ -174,7 +174,7 @@ export default class Astar extends AbstractAgent {
                             copypath.push(def);
                             nextState = simulateAttack(nextState, att, def)
                             let newg = g(clonedeep(nextState), clonedeep(cur_st));
-                            if (this.kind)
+                            if (this.type)
                                 newg += cur_g;
                             let newh = h(clonedeep(nextState));
 

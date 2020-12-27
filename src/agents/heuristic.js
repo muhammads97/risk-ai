@@ -15,7 +15,7 @@ export function g(state, prevState) {
       prevArmy += prevState.territories[k].army;
     }
   });
-  return prevArmy - army;
+  return (prevArmy - army)*0.1/(prevArmy);
 }
 
 export function h(state) {

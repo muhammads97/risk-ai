@@ -41,8 +41,8 @@ export default class EgyptMap extends React.Component {
   }
 
   componentWillMount() {
-    //this.distributeTerritories();
-    this.fixedDistributeTerritories();
+    this.distributeTerritories();
+    //this.fixedDistributeTerritories();
   }
 
   distributeTerritories() {
@@ -75,7 +75,7 @@ export default class EgyptMap extends React.Component {
   fixedDistributeTerritories() {
     
     for (let i = 0; i < this.territories.length; i++) {
-      if (i < 13) {
+      if (i < (this.territories.length-1)/2) {
         this.territories[i].setAgent(this.agent2);
         this.agent2.addTerritory(this.territories[i]);
       } else {
@@ -103,7 +103,7 @@ export default class EgyptMap extends React.Component {
     let newTurn = this.turn.id === 1 ? this.agent2 : this.agent1;
     if(newTurn.getTerritoryCount() === 0){
       gameEnded = true;
-      this.eval();
+      //this.eval();
       this.turn.setDefendingTerritory(null);
       this.turn.setAttackingTerritory(null);
     }else{

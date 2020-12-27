@@ -11,7 +11,8 @@ const states = {
 };
 
 const initialArmy = 30;
-
+var gameEnded = false;
+var bgColor = "yellow";
 export default class USMap extends React.Component {
     constructor(props) {
         super(props);
@@ -78,11 +79,22 @@ export default class USMap extends React.Component {
     endTurn() {
         //console.log("from end turn")
         this.turn.gameState = states.ASSIGN_ARMY;
-        this.turn = this.turn.id === 1 ? this.agent2 : this.agent1;
+        let newTurn = this.turn.id === 1 ? this.agent2 : this.agent1;
+        if(newTurn.getTerritoryCount() === 0){
+          gameEnded = true;
+          //this.eval();
+          this.turn.setDefendingTerritory(null);
+          this.turn.setAttackingTerritory(null);
+        }else{
+          this.turn = newTurn;
         this.turn.calculateBonusArmy();
         this.turn.setDefendingTerritory(null);
         this.turn.setAttackingTerritory(null);
-    }
+        bgColor = this.turn.id === 1 ? "yellow" : "blue";
+        }
+        
+        
+      }
 
     //TODO make the agents in the attack mode till they
     // make a no attack step thats when u make the endturn here
@@ -116,86 +128,93 @@ export default class USMap extends React.Component {
         });
         return {agent: agentId, territories: territories};
     }
-
+    
     render() {
         return (
-            <div className={"gameContainer"}>
-                <div className="us-map">
-                    {this.territories.map((t) => {
-                        let bg_color = t.getAgent().getId() == 1 ? "yellow" : "blue";
-                        bg_color =
-                            this.turn.getAttackingTerritory() === t
-                                ? "green"
-                                : this.turn.getDefendingTerritory() === t
-                                ? "red"
-                                : bg_color;
-
-                        return (
-                            <button
-                                className={"territoryBtn"}
-                                style={{
-                                    top: this.locations[t.name].y,
-                                    left: this.locations[t.name].x,
-                                    backgroundColor: bg_color,
-                                }}
-                                disabled={this.turn.name !== "Human"}
-                                onClick={() => this.territorySelectHandler(t)}
-                            >
-                                {t.army}
-                            </button>
-                        );
-                    })}
-                </div>
-                {
-                    <button
-                        className="button advance"
-                        onClick={() => this.territorySelectHandler(null)}
-                        disabled={this.turn.name === "Human"}
-                    >
-                        {this.turn.gameState === states.INITIAL_ASSIGN ||
-                        this.turn.gameState === states.ASSIGN_ARMY
-                            ? "Assign Army"
-                            : "attack"}
-                    </button>
-                }
-                {
-                    <button
-                        className="button endturn"
-                        disabled={
-                            this.turn.name !== "Human" ||
-                            this.turn.gameState === states.INITIAL_ASSIGN ||
-                            this.turn.gameState === states.ASSIGN_ARMY
-                        }
-                        onClick={() => {
-                            this.endTurn();
-                            this.setState({
-                                dummy: this.state.dummy + 1,
-                            });
-                        }}
-                    >
-                        {"End Turn"}
-                    </button>
-                }
-                <h3 className="game-state">
-                    {this.turn.name +
-                    " " +
-                    this.turn.getId() +
-                    " " +
-                    (this.turn.gameState === states.INITIAL_ASSIGN
-                        ? `Assigning army to territory, remaining: ${this.turn.freeArmies}`
-                        : this.turn.gameState === states.ASSIGN_ARMY
-                            ? `Assigning army to territory, remaining: ${this.turn.freeArmies}`
-                            : this.turn.gameState === states.ATTACK
-                                ? `Attacking ${
-                                    this.turn.name === "Human"
-                                        ? "select your attacking territory"
-                                        : "press attack to procceed"
-                                }`
-                                : this.turn.gameState === states.VICTIM
-                                    ? "Attacking, Select your victim"
-                                    : null)}
-                </h3>
+          <div className={"gameContainer"}>
+            <div className="us-map">
+              {this.territories.map((t) => {
+                let bg_color = t.getAgent().getId() === 1 ? "yellow" : "blue";
+                bg_color =
+                  this.turn.getAttackingTerritory() === t
+                    ? "green"
+                    : this.turn.getDefendingTerritory() === t
+                    ? "red"
+                    : bg_color;
+    
+                return (
+                  <button
+                    className={"territoryBtn"}
+                    style={{
+                      top: this.locations[t.name].y,
+                      left: this.locations[t.name].x,
+                      backgroundColor: bg_color,
+                    }}
+                    disabled={this.turn.name !== "Human" || gameEnded}
+                    onClick={() => this.territorySelectHandler(t)}
+                  >
+                    {t.army}
+                  </button>
+                );
+              })}
             </div>
+            {
+              <button
+                className="button advance"
+                onClick={() => this.territorySelectHandler(this.getStateObject())}
+                disabled={this.turn.name === "Human" || gameEnded}
+              >
+                {this.turn.gameState === states.INITIAL_ASSIGN ||
+                this.turn.gameState === states.ASSIGN_ARMY
+                  ? "Assign Army"
+                  : "attack"}
+              </button>
+            }
+            {
+              <button
+                className="button endturn"
+                disabled={
+                  this.turn.name !== "Human" ||
+                  this.turn.gameState === states.INITIAL_ASSIGN ||
+                  this.turn.gameState === states.ASSIGN_ARMY || gameEnded
+                }
+                onClick={() => {
+                  this.endTurn();
+                  this.setState({
+                    dummy: this.state.dummy + 1,
+                  });
+                }}
+              >
+                {"End Turn"}
+              </button>
+            }
+            <h3 className="game-state"
+            style={{
+              color:bgColor
+            }}
+            > 
+              {this.turn.name +
+                " " +
+                this.turn.getId() +
+                " " +
+                (
+                  gameEnded ? "Won the Game!! , Game Ended"
+                  :
+                  this.turn.gameState === states.INITIAL_ASSIGN
+                  ? `Assigning army to territory, remaining: ${this.turn.freeArmies}`
+                  : this.turn.gameState === states.ASSIGN_ARMY
+                  ? `Assigning army to territory, remaining: ${this.turn.freeArmies}`
+                  : this.turn.gameState === states.ATTACK
+                  ? `Attacking ${
+                      this.turn.name === "Human"
+                        ? "select your attacking territory"
+                        : "press attack to procceed"
+                    }`
+                  : this.turn.gameState === states.VICTIM
+                  ? "Attacking, Select your victim"
+                  : null)}
+            </h3>
+          </div>
         );
-    }
+      }
 }
